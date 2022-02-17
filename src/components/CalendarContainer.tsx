@@ -36,7 +36,7 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
   /**
    * Events to be rendered. This is a required prop.
    */
-  events: T[]
+  events?: T[]
 
   /**
    * The height of calendar component. This is a required prop.
@@ -93,10 +93,13 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
   headerComponentStyle?: ViewStyle
   hourStyle?: TextStyle
   showAllDayEventCell?: boolean
+  showHourGuide?:boolean
+  hourRange?:string
+  multipleColumnData?:[]
 }
 
 function _CalendarContainer<T extends ICalendarEventBase>({
-  events,
+  events = [],
   height,
   hourRowHeight,
   ampm = false,
@@ -134,6 +137,9 @@ function _CalendarContainer<T extends ICalendarEventBase>({
   headerComponentStyle = {},
   hourStyle = {},
   showAllDayEventCell = true,
+  showHourGuide= true,
+  hourRange,
+  multipleColumnData,
 }: CalendarContainerProps<T>) {
   const [targetDate, setTargetDate] = React.useState(dayjs(date))
 
@@ -243,6 +249,7 @@ function _CalendarContainer<T extends ICalendarEventBase>({
           targetDate={targetDate}
           maxVisibleEventCount={maxVisibleEventCount}
           eventMinHeightForMonthView={eventMinHeightForMonthView}
+         
         />
       </React.Fragment>
     )
@@ -259,11 +266,12 @@ function _CalendarContainer<T extends ICalendarEventBase>({
     dayHeaderHighlightColor: dayHeaderHighlightColor,
     weekDayHeaderHighlightColor: weekDayHeaderHighlightColor,
     showAllDayEventCell: showAllDayEventCell,
+    multipleColumnData
   }
-
+  
   return (
     <React.Fragment>
-      <HeaderComponent {...headerProps} />
+      { !multipleColumnData && <HeaderComponent {...headerProps} /> }
       <CalendarBody
         {...commonProps}
         style={bodyContainerStyle}
@@ -283,6 +291,9 @@ function _CalendarContainer<T extends ICalendarEventBase>({
         headerComponent={headerComponent}
         headerComponentStyle={headerComponentStyle}
         hourStyle={hourStyle}
+        showHourGuide={showHourGuide}
+        hourRange={hourRange}
+        multipleColumnData={multipleColumnData}
       />
     </React.Fragment>
   )

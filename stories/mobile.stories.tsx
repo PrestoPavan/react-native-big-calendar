@@ -5,7 +5,7 @@ import { Alert, View } from 'react-native'
 
 import { Calendar } from '../src'
 import { AppHeader, HEADER_HEIGHT } from './components/AppHeader'
-import { events } from './events'
+import { events,multipleUserEvents } from './events'
 import { useEvents } from './hooks'
 import { styles } from './styles'
 
@@ -28,6 +28,22 @@ storiesOf('showcase - Mobile', module)
         events={events}
         mode="day"
         onPressEvent={(event) => alert(event.title)}
+      />
+    </View>
+  ))
+  .add('day mode - multiple data', () => (
+    <View style={styles.mobile}>
+      <Calendar
+        height={MOBILE_HEIGHT}
+        onPressEvent={(event) => alert(event.title)}
+        onPressCell={() => void 0}
+        mode="day"
+        showHourGuide={true}
+        hourRange={'0-23'}
+        multipleColumnData={multipleUserEvents}
+        ampm
+        hourRowHeight={70}
+        hourStyle={{}}
       />
     </View>
   ))

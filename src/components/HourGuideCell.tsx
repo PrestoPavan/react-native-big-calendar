@@ -36,11 +36,17 @@ export const HourGuideCell = ({
         style={[
           u['border-l'],
           u['border-b'],
-          { borderColor: theme.palette.gray['200'] },
+          { borderColor: theme.palette.gray['200'], backgroundColor:theme.palette.cellBackgroundColor },
           { height: cellHeight },
           { ...getCalendarCellStyle(date.toDate(), index) },
         ]}
-      />
+      >
+        <View style={{ height:cellHeight/4, width:'100%', borderBottomColor:'#F1F1F1', borderBottomWidth:1 }}></View>
+        <View style={{ height:cellHeight/4, width:'100%', borderBottomColor:'#F1F1F1', borderBottomWidth:1 }}></View>
+        <View style={{ height:cellHeight/4, width:'100%', borderBottomColor:'#F1F1F1', borderBottomWidth:1 }}></View>
+        <View style={{ height:cellHeight/4, width:'100%', }}></View>
+        
+      </View>
     </TouchableWithoutFeedback>
   )
 }

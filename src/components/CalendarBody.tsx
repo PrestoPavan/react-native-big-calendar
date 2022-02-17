@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import * as React from 'react'
-import { Platform, ScrollView, StyleSheet, TextStyle, View, ViewStyle } from 'react-native'
+import { Platform, ScrollView, StyleSheet, TextStyle, View, ViewStyle,Text, Image } from 'react-native'
 
 import { u } from '../commonStyles'
 import { useNow } from '../hooks/useNow'
@@ -17,9 +17,9 @@ import {
   getCountOfEventsAtEvent,
   getOrderOfEvent,
   getRelativeTopInDay,
-  hours,
   isToday,
   typedMemo,
+  hoursRange
 } from '../utils'
 import { CalendarEvent } from './CalendarEvent'
 import { HourGuideCell } from './HourGuideCell'
@@ -53,7 +53,10 @@ interface CalendarBodyProps<T extends ICalendarEventBase> {
   renderEvent?: EventRenderer<T>
   headerComponent?: React.ReactElement | null
   headerComponentStyle?: ViewStyle
-  hourStyle?: TextStyle
+  hourStyle?: TextStyle,
+  showHourGuide:boolean,
+  hourRange?:string
+  multipleColumnData?:[]
 }
 
 function _CalendarBody<T extends ICalendarEventBase>({
@@ -76,6 +79,9 @@ function _CalendarBody<T extends ICalendarEventBase>({
   headerComponent = null,
   headerComponentStyle = {},
   hourStyle = {},
+  showHourGuide = true,
+  hourRange = '0-23',
+  multipleColumnData
 }: CalendarBodyProps<T>) {
   const scrollView = React.useRef<ScrollView>(null)
   const { now } = useNow(!hideNowIndicator)
@@ -125,7 +131,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
   )
 
   const theme = useTheme()
-
+  
   return (
     <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
@@ -133,6 +139,9 @@ function _CalendarBody<T extends ICalendarEventBase>({
         style={[
           {
             height: containerHeight - cellHeight * 3,
+            backgroundColor:theme.palette.backgroundColor,
+            borderWidth:1,
+            borderColor:theme.palette.borderColor
           },
           style,
         ]}
@@ -142,13 +151,15 @@ function _CalendarBody<T extends ICalendarEventBase>({
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
         contentOffset={Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }}
+        
       >
+
         <View
-          style={[u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row']]}
+          style={[u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row'], multipleColumnData && multipleColumnData.length > 0 ? { overflow:'scroll', paddingTop:100} : {}  ]}
           {...(Platform.OS === 'web' ? panResponder.panHandlers : {})}
         >
-          <View style={[u['z-20'], u['w-50']]}>
-            {hours.map((hour) => (
+          <View style={[u['z-20'], u['w-70'], {marginTop:-1}]}>
+            {hoursRange(hourRange).map((hour) => (
               <HourGuideColumn
                 key={hour}
                 cellHeight={cellHeight}
@@ -158,71 +169,156 @@ function _CalendarBody<T extends ICalendarEventBase>({
               />
             ))}
           </View>
-          {dateRange.map((date) => (
-            <View style={[u['flex-1'], u['overflow-hidden']]} key={date.toString()}>
-              {hours.map((hour, index) => (
-                <HourGuideCell
-                  key={hour}
-                  cellHeight={cellHeight}
-                  date={date}
-                  hour={hour}
-                  onPress={_onPressCell}
-                  index={index}
-                  calendarCellStyle={calendarCellStyle}
-                />
-              ))}
 
-              {/* Render events of this date */}
-              {/* M  T  (W)  T  F  S  S */}
-              {/*       S-E             */}
-              {events
-                .filter(({ start }) =>
-                  dayjs(start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
-                )
-                .map(_renderMappedEvent)}
+          {
+            multipleColumnData && multipleColumnData.length > 0 ? 
+              multipleColumnData.map( (column:any) =>{
+                return dateRange.map((date) => (
+                  <View style={[u['flex-1'], u['overflow-hidden'], {minWidth:Platform.OS !== 'web' ? 100:300, position:'relative', overflow:'visible'}]} key={date.toString()}>
+                    <View style={{ backgroundColor:theme.palette.cellBg, borderLeftWidth:1, borderBottomWidth:1, borderColor:theme.palette.borderColor, height:100, position:'absolute', top:-100, alignItems:'center', justifyContent:'center', paddingVertical:10, width:'100%'}}>
+                      {column.image_url && 
+                        <View>
+                          <Image source={{uri:column.image_url}} style={{ width:50, height:50 , borderRadius:50}} />
+                        </View> 
+                      }
+                      <View style={[ { minWidth:Platform.OS !== 'web' ? 100:200, paddingVertical:10  } ]}>
+                        <Text style={{color:theme.palette.headingColor, textAlign:'center'}}>{column.title}</Text>
+                      </View>
+                    </View>
+                    {hoursRange(hourRange).map((hour, index) => (
+                      <HourGuideCell
+                        key={hour}
+                        cellHeight={cellHeight}
+                        date={date}
+                        hour={hour}
+                        onPress={_onPressCell}
+                        index={index}
+                        calendarCellStyle={calendarCellStyle}
+                      />
+                    ))}
+                    
+                    {column.data
+                      .filter((data : T) =>{
+                        return dayjs(data.start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)')
+                      }
+                    )
+                      .map(_renderMappedEvent)}
 
-              {/* Render events which starts before this date and ends on this date */}
-              {/* M  T  (W)  T  F  S  S */}
-              {/* S------E              */}
-              {events
-                .filter(
-                  ({ start, end }) =>
-                    dayjs(start).isBefore(date.startOf('day')) &&
-                    dayjs(end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
-                )
-                .map((event) => ({
-                  ...event,
-                  start: dayjs(event.end).startOf('day'),
-                }))
-                .map(_renderMappedEvent)}
+                    {/* Render events which starts before this date and ends on this date */}
+                    {/* M  T  (W)  T  F  S  S */}
+                    {/* S------E              */}
+                    {column.data
+                      .filter(
+                        ( (data : T) => {
+                        return dayjs(data.start).isBefore(date.startOf('day')) &&
+                          dayjs(data.end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)')
+                        }
+                      ))
+                      .map((event:T) => ({
+                        ...event,
+                        start: dayjs(event.end).startOf('day'),
+                      }))
+                      .map(_renderMappedEvent)
+                    }
 
-              {/* Render events which starts before this date and ends after this date */}
-              {/* M  T  (W)  T  F  S  S */}
-              {/*    S-------E          */}
-              {events
-                .filter(
-                  ({ start, end }) =>
-                    dayjs(start).isBefore(date.startOf('day')) &&
-                    dayjs(end).isAfter(date.endOf('day')),
-                )
-                .map((event) => ({
-                  ...event,
-                  start: dayjs(event.end).startOf('day'),
-                  end: dayjs(event.end).endOf('day'),
-                }))
-                .map(_renderMappedEvent)}
+                    {/* Render events which starts before this date and ends after this date */}
+                    {/* M  T  (W)  T  F  S  S */}
+                    {/*    S-------E          */}
+                    {column.data
+                      .filter(
+                        (data:T) => {
+                          return dayjs(data.start).isBefore(date.startOf('day')) &&
+                          dayjs(data.end).isAfter(date.endOf('day'))
+                        }
+                      )
+                      .map((event:T) => ({
+                        ...event,
+                        start: dayjs(event.end).startOf('day'),
+                        end: dayjs(event.end).endOf('day'),
+                      }))
+                      .map(_renderMappedEvent)}
 
-              {isToday(date) && !hideNowIndicator && (
-                <View
-                  style={[
-                    styles.nowIndicator,
-                    { backgroundColor: theme.palette.nowIndicator },
-                    { top: `${getRelativeTopInDay(now)}%` },
-                  ]}
-                />
-              )}
-            </View>
-          ))}
+                    {isToday(date) && !hideNowIndicator && (
+                      <View
+                        style={[
+                          styles.nowIndicator,
+                          { backgroundColor: theme.palette.nowIndicator },
+                          { top: `${getRelativeTopInDay(now)}%` },
+                        ]}
+                      />
+                    )}
+                  </View>
+                ))
+              })
+            : 
+              dateRange.map((date) => (
+                <View style={[u['flex-1'], u['overflow-hidden']]} key={date.toString()}>
+                  {hoursRange(hourRange).map((hour, index) => (
+                    <HourGuideCell
+                      key={hour}
+                      cellHeight={cellHeight}
+                      date={date}
+                      hour={hour}
+                      onPress={_onPressCell}
+                      index={index}
+                      calendarCellStyle={calendarCellStyle}
+                    />
+                  ))}
+
+                  {/* Render events of this date */}
+                  {/* M  T  (W)  T  F  S  S */}
+                  {/*       S-E             */}
+                  {events
+                    .filter(({ start }) =>
+                      dayjs(start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
+                    )
+                    .map(_renderMappedEvent)}
+
+                  {/* Render events which starts before this date and ends on this date */}
+                  {/* M  T  (W)  T  F  S  S */}
+                  {/* S------E              */}
+                  {events
+                    .filter(
+                      ({ start, end }) =>
+                        dayjs(start).isBefore(date.startOf('day')) &&
+                        dayjs(end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
+                    )
+                    .map((event) => ({
+                      ...event,
+                      start: dayjs(event.end).startOf('day'),
+                    }))
+                    .map(_renderMappedEvent)}
+
+                  {/* Render events which starts before this date and ends after this date */}
+                  {/* M  T  (W)  T  F  S  S */}
+                  {/*    S-------E          */}
+                  {events
+                    .filter(
+                      ({ start, end }) =>
+                        dayjs(start).isBefore(date.startOf('day')) &&
+                        dayjs(end).isAfter(date.endOf('day')),
+                    )
+                    .map((event) => ({
+                      ...event,
+                      start: dayjs(event.end).startOf('day'),
+                      end: dayjs(event.end).endOf('day'),
+                    }))
+                    .map(_renderMappedEvent)}
+
+                  {isToday(date) && !hideNowIndicator && (
+                    <View
+                      style={[
+                        styles.nowIndicator,
+                        { backgroundColor: theme.palette.nowIndicator },
+                        { top: `${getRelativeTopInDay(now)}%` },
+                      ]}
+                    />
+                  )}
+                  
+                </View>
+                
+              ))
+          } 
         </View>
       </ScrollView>
     </React.Fragment>

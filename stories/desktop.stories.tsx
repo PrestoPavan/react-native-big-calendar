@@ -7,7 +7,7 @@ import { Alert, Dimensions, View } from 'react-native'
 
 import { Calendar } from '../src'
 import { CONTROL_HEIGHT, Control } from './components/Control'
-import { customEventRenderer, events, spanningEvents } from './events'
+import { customEventRenderer, events, spanningEvents, multipleUserEvents } from './events'
 import { useEvents } from './hooks'
 import { styles } from './styles'
 import { themes } from './themes'
@@ -23,7 +23,7 @@ function alert(input: any) {
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-storiesOf('showcase - Desktop', module)
+storiesOf('showcase Desktop', module)
   .add('day mode', () => (
     <View style={styles.desktop}>
       <Calendar
@@ -32,6 +32,24 @@ storiesOf('showcase - Desktop', module)
         onPressEvent={(event) => alert(event.title)}
         onPressCell={() => void 0}
         mode="day"
+        showHourGuide={true}
+        hourRange={'0-23'}
+      />
+    </View>
+  ))
+  .add('day mode - multiple data', () => (
+    <View style={styles.desktop}>
+      <Calendar
+        height={800}
+        onPressEvent={(event) => alert(event.title)}
+        onPressCell={() => void 0}
+        mode="day"
+        showHourGuide={true}
+        hourRange={'0-23'}
+        multipleColumnData={multipleUserEvents}
+        ampm
+        hourRowHeight={70}
+        hourStyle={{}}
       />
     </View>
   ))
@@ -43,6 +61,7 @@ storiesOf('showcase - Desktop', module)
         onPressEvent={(event) => alert(event.title)}
         onPressCell={() => void 0}
         mode="3days"
+        events={events}
       />
     </View>
   ))

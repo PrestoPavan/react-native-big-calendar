@@ -8,7 +8,8 @@ export interface ICalendarEventBase {
   start: Date
   end: Date
   title: string
-  children?: ReactElement | null
+  children?: ReactElement | null,
+  data?: any
 }
 
 export type CalendarTouchableOpacityProps = {

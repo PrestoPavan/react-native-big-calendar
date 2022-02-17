@@ -13,7 +13,9 @@ import { CalendarContainer, CalendarContainerProps } from './CalendarContainer'
 
 export interface CalendarProps<T extends ICalendarEventBase> extends CalendarContainerProps<T> {
   theme?: DeepPartial<ThemeInterface>
-  isRTL?: boolean
+  isRTL?: boolean,
+  showHourGuide?:boolean,
+  hourRange?:string,
 }
 
 dayjs.extend(isBetween)
@@ -21,12 +23,15 @@ dayjs.extend(isBetween)
 function _Calendar<T extends ICalendarEventBase>({
   theme = defaultTheme,
   isRTL,
+  showHourGuide,
+  hourRange,
   ...props
 }: CalendarProps<T>) {
+  
   const _theme = merge(defaultTheme, theme, { isRTL }) as ThemeInterface
   return (
     <ThemeContext.Provider value={_theme}>
-      <CalendarContainer {...props} />
+      <CalendarContainer {...props} showHourGuide={showHourGuide} hourRange={hourRange}  />
     </ThemeContext.Provider>
   )
 }

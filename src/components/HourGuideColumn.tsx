@@ -21,7 +21,7 @@ const _HourGuideColumn = ({ cellHeight, hour, ampm, hourStyle = {} }: HourGuideC
   )
 
   return (
-    <View style={{ height: cellHeight }}>
+    <View style={{ height: cellHeight, backgroundColor:theme.palette.cellBg, width:70, borderTopWidth:1, borderColor:theme.palette.gray[200] }}>
       <Text style={[objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']]}>
         {formatHour(hour, ampm)}
       </Text>

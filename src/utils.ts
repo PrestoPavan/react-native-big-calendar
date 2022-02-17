@@ -62,18 +62,28 @@ export const hours = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ]
 
+export function hoursRange(range: string){
+  let rangeArray = range.split('-')
+  let result = []
+  for ( let i = Number(rangeArray[0]) ; i <= Number(rangeArray[1]) ; i++){
+    result.push(i) 
+  }
+  return result
+}
+
+
 export function formatHour(hour: number, ampm = false) {
   if (ampm) {
     if (hour === 0) {
       return ''
     }
     if (hour === 12) {
-      return `12 PM`
+      return `12:00 PM`
     }
     if (hour > 12) {
-      return `${hour - 12} PM`
+      return `${hour - 12}:00 PM`
     }
-    return `${hour} AM`
+    return `${hour}:00 AM`
   }
   return `${hour}:00`
 }
