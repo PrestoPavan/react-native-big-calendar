@@ -46,10 +46,9 @@ storiesOf('showcase Desktop', module)
         mode="day"
         showHourGuide={true}
         hourRange={'0-23'}
-        multipleColumnData={multipleUserEvents}
         ampm
         hourRowHeight={70}
-        hourStyle={{}}
+        multipleColumnData={multipleUserEvents}
       />
     </View>
   ))
@@ -61,7 +60,6 @@ storiesOf('showcase Desktop', module)
         onPressEvent={(event) => alert(event.title)}
         onPressCell={() => void 0}
         mode="3days"
-        events={events}
       />
     </View>
   ))

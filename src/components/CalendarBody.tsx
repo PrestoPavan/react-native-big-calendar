@@ -158,7 +158,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
           style={[u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row'], multipleColumnData && multipleColumnData.length > 0 ? { overflow:'scroll', paddingTop:100} : {}  ]}
           {...(Platform.OS === 'web' ? panResponder.panHandlers : {})}
         >
-          <View style={[u['z-20'], u['w-70'], {marginTop:-1}]}>
+          {showHourGuide ? <View style={[u['z-20'], u['w-70'], {marginTop:-1}]}>
             {hoursRange(hourRange).map((hour) => (
               <HourGuideColumn
                 key={hour}
@@ -168,7 +168,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
                 hourStyle={hourStyle}
               />
             ))}
-          </View>
+          </View> : null}
 
           {
             multipleColumnData && multipleColumnData.length > 0 ? 

@@ -5,7 +5,7 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
     /**
      * Events to be rendered. This is a required prop.
      */
-    events: T[];
+    events?: T[];
     /**
      * The height of calendar component. This is a required prop.
      */
@@ -53,7 +53,10 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
     headerComponentStyle?: ViewStyle;
     hourStyle?: TextStyle;
     showAllDayEventCell?: boolean;
+    showHourGuide?: boolean;
+    hourRange?: string;
+    multipleColumnData?: [];
 }
-declare function _CalendarContainer<T extends ICalendarEventBase>({ events, height, hourRowHeight, ampm, date, eventCellStyle, calendarCellStyle, calendarCellTextStyle, locale, hideNowIndicator, showAdjacentMonths, mode, overlapOffset, scrollOffsetMinutes, showTime, headerContainerStyle, headerContentStyle, dayHeaderStyle, dayHeaderHighlightColor, weekDayHeaderHighlightColor, bodyContainerStyle, swipeEnabled, weekStartsOn, onChangeDate, onPressCell, onPressDateHeader, onPressEvent, renderEvent, renderHeader: HeaderComponent, renderHeaderForMonthView: HeaderComponentForMonthView, weekEndsOn, maxVisibleEventCount, eventMinHeightForMonthView, activeDate, headerComponent, headerComponentStyle, hourStyle, showAllDayEventCell, }: CalendarContainerProps<T>): JSX.Element;
+declare function _CalendarContainer<T extends ICalendarEventBase>({ events, height, hourRowHeight, ampm, date, eventCellStyle, calendarCellStyle, calendarCellTextStyle, locale, hideNowIndicator, showAdjacentMonths, mode, overlapOffset, scrollOffsetMinutes, showTime, headerContainerStyle, headerContentStyle, dayHeaderStyle, dayHeaderHighlightColor, weekDayHeaderHighlightColor, bodyContainerStyle, swipeEnabled, weekStartsOn, onChangeDate, onPressCell, onPressDateHeader, onPressEvent, renderEvent, renderHeader: HeaderComponent, renderHeaderForMonthView: HeaderComponentForMonthView, weekEndsOn, maxVisibleEventCount, eventMinHeightForMonthView, activeDate, headerComponent, headerComponentStyle, hourStyle, showAllDayEventCell, showHourGuide, hourRange, multipleColumnData, }: CalendarContainerProps<T>): JSX.Element;
 export declare const CalendarContainer: typeof _CalendarContainer;
 export {};

@@ -10,6 +10,7 @@ export declare function getDatesInWeek(date?: Date | dayjs.Dayjs, weekStartsOn?:
 export declare function getDatesInNextThreeDays(date?: Date | dayjs.Dayjs, locale?: string): dayjs.Dayjs[];
 export declare function getDatesInNextOneDay(date?: Date | dayjs.Dayjs, locale?: string): dayjs.Dayjs[];
 export declare const hours: number[];
+export declare function hoursRange(range: string): number[];
 export declare function formatHour(hour: number, ampm?: boolean): string;
 export declare function isToday(date: dayjs.Dayjs): boolean;
 export declare function getRelativeTopInDay(date: dayjs.Dayjs): number;

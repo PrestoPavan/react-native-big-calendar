@@ -22,7 +22,10 @@ interface CalendarBodyProps<T extends ICalendarEventBase> {
     headerComponent?: React.ReactElement | null;
     headerComponentStyle?: ViewStyle;
     hourStyle?: TextStyle;
+    showHourGuide: boolean;
+    hourRange?: string;
+    multipleColumnData?: [];
 }
-declare function _CalendarBody<T extends ICalendarEventBase>({ containerHeight, cellHeight, dateRange, style, onPressCell, events, onPressEvent, eventCellStyle, calendarCellStyle, ampm, showTime, scrollOffsetMinutes, onSwipeHorizontal, hideNowIndicator, overlapOffset, renderEvent, headerComponent, headerComponentStyle, hourStyle, }: CalendarBodyProps<T>): JSX.Element;
+declare function _CalendarBody<T extends ICalendarEventBase>({ containerHeight, cellHeight, dateRange, style, onPressCell, events, onPressEvent, eventCellStyle, calendarCellStyle, ampm, showTime, scrollOffsetMinutes, onSwipeHorizontal, hideNowIndicator, overlapOffset, renderEvent, headerComponent, headerComponentStyle, hourStyle, showHourGuide, hourRange, multipleColumnData }: CalendarBodyProps<T>): JSX.Element;
 export declare const CalendarBody: typeof _CalendarBody;
 export {};

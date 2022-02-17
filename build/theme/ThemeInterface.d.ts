@@ -9,6 +9,11 @@ export interface ThemeInterface {
     palette: {
         primary: Palette;
         nowIndicator: string;
+        cellBg: string;
+        borderColor: string;
+        headingColor: string;
+        backgroundColor: string;
+        cellBackgroundColor: string;
         gray: {
             100: string;
             200: string;

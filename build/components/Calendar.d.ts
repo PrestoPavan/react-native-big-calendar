@@ -5,7 +5,9 @@ import { CalendarContainerProps } from './CalendarContainer';
 export interface CalendarProps<T extends ICalendarEventBase> extends CalendarContainerProps<T> {
     theme?: DeepPartial<ThemeInterface>;
     isRTL?: boolean;
+    showHourGuide?: boolean;
+    hourRange?: string;
 }
-declare function _Calendar<T extends ICalendarEventBase>({ theme, isRTL, ...props }: CalendarProps<T>): JSX.Element;
+declare function _Calendar<T extends ICalendarEventBase>({ theme, isRTL, showHourGuide, hourRange, ...props }: CalendarProps<T>): JSX.Element;
 export declare const Calendar: typeof _Calendar;
 export {};

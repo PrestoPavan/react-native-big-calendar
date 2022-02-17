@@ -120,6 +120,9 @@ export declare const u: {
     'w-50': {
         width: number;
     };
+    'w-70': {
+        width: number;
+    };
     'h-36': {
         height: number;
     };

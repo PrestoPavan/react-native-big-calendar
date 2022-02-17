@@ -7,6 +7,7 @@ export interface ICalendarEventBase {
     end: Date;
     title: string;
     children?: ReactElement | null;
+    data?: any;
 }
 export declare type CalendarTouchableOpacityProps = {
     delayPressIn: number;
