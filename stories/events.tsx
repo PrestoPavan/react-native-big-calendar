@@ -30,7 +30,7 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
   },
   {
     title: 'with color prop',
-    start: dayjs().set('hour', 16).set('minute', 0).toDate(),
+    start: dayjs().set('hour', 23).set('minute', 55).toDate(),
     end: dayjs().add(1, 'day').set('hour', 18).set('minute', 30).toDate(),
     color: 'purple',
   },
@@ -121,7 +121,7 @@ export const multipleUserEvents = [
       },
       {
         title: 'Haircut',
-        start: dayjs().set('hour', 23).set('minute', 0).toDate(),
+        start: dayjs().set('hour', 23).set('minute', 55).toDate(),
         end: dayjs().add(1, 'day').set('hour', 2).set('minute', 0).toDate(),
         children: eventNotes,
       },

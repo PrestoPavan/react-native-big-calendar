@@ -733,38 +733,70 @@ function _CalendarBody(_a) {
                     height: containerHeight - cellHeight * 3,
                     backgroundColor: theme.palette.backgroundColor,
                     borderWidth: 1,
-                    borderColor: theme.palette.borderColor
+                    borderColor: theme.palette.borderColor,
                 },
                 style,
             ], ref: scrollView, scrollEventThrottle: 32 }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: reactNative.Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 } }),
-            React__namespace.createElement(reactNative.View, __assign({ style: [u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row'], multipleColumnData && multipleColumnData.length > 0 ? { overflow: 'scroll', paddingTop: 100 } : {}] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
-                showHourGuide ? React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); })) : null,
-                multipleColumnData && multipleColumnData.length > 0 ?
-                    multipleColumnData.map(function (column) {
-                        return dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [u['flex-1'], u['overflow-hidden'], { minWidth: reactNative.Platform.OS !== 'web' ? 100 : 300, position: 'relative', overflow: 'visible' }], key: date.toString() },
-                            React__namespace.createElement(reactNative.View, { style: { backgroundColor: theme.palette.cellBg, borderLeftWidth: 1, borderBottomWidth: 1, borderColor: theme.palette.borderColor, height: 100, position: 'absolute', top: -100, alignItems: 'center', justifyContent: 'center', paddingVertical: 10, width: '100%' } },
-                                column.image_url &&
-                                    React__namespace.createElement(reactNative.View, null,
-                                        React__namespace.createElement(reactNative.Image, { source: { uri: column.image_url }, style: { width: 50, height: 50, borderRadius: 50 } })),
-                                React__namespace.createElement(reactNative.View, { style: [{ minWidth: reactNative.Platform.OS !== 'web' ? 100 : 200, paddingVertical: 10 }] },
+            React__namespace.createElement(reactNative.View, __assign({ style: [
+                    u['flex-1'],
+                    theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
+                    multipleColumnData && multipleColumnData.length > 0
+                        ? { overflow: 'scroll', paddingTop: 100 }
+                        : {},
+                ] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
+                showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                multipleColumnData && multipleColumnData.length > 0
+                    ? multipleColumnData.map(function (column) {
+                        return dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [
+                                u['flex-1'],
+                                u['overflow-hidden'],
+                                {
+                                    minWidth: reactNative.Platform.OS !== 'web' ? 100 : 300,
+                                    position: 'relative',
+                                    overflow: 'visible',
+                                },
+                            ], key: date.toString() },
+                            React__namespace.createElement(reactNative.View, { style: {
+                                    backgroundColor: theme.palette.cellBg,
+                                    borderLeftWidth: 1,
+                                    borderBottomWidth: 1,
+                                    borderColor: theme.palette.borderColor,
+                                    height: 100,
+                                    position: 'absolute',
+                                    top: -100,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingVertical: 10,
+                                    width: '100%',
+                                } },
+                                column.image_url && (React__namespace.createElement(reactNative.View, null,
+                                    React__namespace.createElement(reactNative.Image, { source: { uri: column.image_url }, style: { width: 50, height: 50, borderRadius: 50 } }))),
+                                React__namespace.createElement(reactNative.View, { style: [
+                                        { minWidth: reactNative.Platform.OS !== 'web' ? 100 : 200, paddingVertical: 10 },
+                                    ] },
                                     React__namespace.createElement(reactNative.Text, { style: { color: theme.palette.headingColor, textAlign: 'center' } }, column.title))),
                             hoursRange(hourRange).map(function (hour, index) { return (React__namespace.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
                             column.data
                                 .filter(function (data) {
                                 return dayjs__default['default'](data.start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
                             })
+                                .map(function (event) {
+                                return __assign(__assign({}, event), { end: dayjs__default['default'](event.end).isAfter(dayjs__default['default'](event.start).endOf('day'))
+                                        ? dayjs__default['default'](event.start).endOf('day')
+                                        : event.end });
+                            })
                                 .map(_renderMappedEvent),
                             column.data
-                                .filter((function (data) {
-                                return dayjs__default['default'](data.start).isBefore(date.startOf('day')) &&
-                                    dayjs__default['default'](data.end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
-                            }))
+                                .filter(function (data) {
+                                return (dayjs__default['default'](data.start).isBefore(date.startOf('day')) &&
+                                    dayjs__default['default'](data.end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'));
+                            })
                                 .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day') })); })
                                 .map(_renderMappedEvent),
                             column.data
                                 .filter(function (data) {
-                                return dayjs__default['default'](data.start).isBefore(date.startOf('day')) &&
-                                    dayjs__default['default'](data.end).isAfter(date.endOf('day'));
+                                return (dayjs__default['default'](data.start).isBefore(date.startOf('day')) &&
+                                    dayjs__default['default'](data.end).isAfter(date.endOf('day')));
                             })
                                 .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day'), end: dayjs__default['default'](event.end).endOf('day') })); })
                                 .map(_renderMappedEvent),
@@ -774,36 +806,35 @@ function _CalendarBody(_a) {
                                     { top: "".concat(getRelativeTopInDay(now), "%") },
                                 ] })))); });
                     })
-                    :
-                        dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
-                            hoursRange(hourRange).map(function (hour, index) { return (React__namespace.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
-                            events
-                                .filter(function (_a) {
-                                var start = _a.start;
-                                return dayjs__default['default'](start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
-                            })
-                                .map(_renderMappedEvent),
-                            events
-                                .filter(function (_a) {
-                                var start = _a.start, end = _a.end;
-                                return dayjs__default['default'](start).isBefore(date.startOf('day')) &&
-                                    dayjs__default['default'](end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
-                            })
-                                .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day') })); })
-                                .map(_renderMappedEvent),
-                            events
-                                .filter(function (_a) {
-                                var start = _a.start, end = _a.end;
-                                return dayjs__default['default'](start).isBefore(date.startOf('day')) &&
-                                    dayjs__default['default'](end).isAfter(date.endOf('day'));
-                            })
-                                .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day'), end: dayjs__default['default'](event.end).endOf('day') })); })
-                                .map(_renderMappedEvent),
-                            isToday(date) && !hideNowIndicator && (React__namespace.createElement(reactNative.View, { style: [
-                                    styles.nowIndicator,
-                                    { backgroundColor: theme.palette.nowIndicator },
-                                    { top: "".concat(getRelativeTopInDay(now), "%") },
-                                ] })))); })))));
+                    : dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
+                        hoursRange(hourRange).map(function (hour, index) { return (React__namespace.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
+                        events
+                            .filter(function (_a) {
+                            var start = _a.start;
+                            return dayjs__default['default'](start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
+                        })
+                            .map(_renderMappedEvent),
+                        events
+                            .filter(function (_a) {
+                            var start = _a.start, end = _a.end;
+                            return dayjs__default['default'](start).isBefore(date.startOf('day')) &&
+                                dayjs__default['default'](end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
+                        })
+                            .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day') })); })
+                            .map(_renderMappedEvent),
+                        events
+                            .filter(function (_a) {
+                            var start = _a.start, end = _a.end;
+                            return dayjs__default['default'](start).isBefore(date.startOf('day')) &&
+                                dayjs__default['default'](end).isAfter(date.endOf('day'));
+                        })
+                            .map(function (event) { return (__assign(__assign({}, event), { start: dayjs__default['default'](event.end).startOf('day'), end: dayjs__default['default'](event.end).endOf('day') })); })
+                            .map(_renderMappedEvent),
+                        isToday(date) && !hideNowIndicator && (React__namespace.createElement(reactNative.View, { style: [
+                                styles.nowIndicator,
+                                { backgroundColor: theme.palette.nowIndicator },
+                                { top: "".concat(getRelativeTopInDay(now), "%") },
+                            ] })))); })))));
 }
 var CalendarBody = typedMemo(_CalendarBody);
 
