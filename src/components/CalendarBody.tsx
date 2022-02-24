@@ -1,6 +1,15 @@
 import dayjs from 'dayjs'
 import * as React from 'react'
-import { Platform, ScrollView, StyleSheet, TextStyle, View, ViewStyle,Text, Image } from 'react-native'
+import {
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native'
 
 import { u } from '../commonStyles'
 import { useNow } from '../hooks/useNow'
@@ -17,9 +26,9 @@ import {
   getCountOfEventsAtEvent,
   getOrderOfEvent,
   getRelativeTopInDay,
+  hoursRange,
   isToday,
   typedMemo,
-  hoursRange
 } from '../utils'
 import { CalendarEvent } from './CalendarEvent'
 import { HourGuideCell } from './HourGuideCell'
@@ -53,10 +62,10 @@ interface CalendarBodyProps<T extends ICalendarEventBase> {
   renderEvent?: EventRenderer<T>
   headerComponent?: React.ReactElement | null
   headerComponentStyle?: ViewStyle
-  hourStyle?: TextStyle,
-  showHourGuide:boolean,
-  hourRange?:string
-  multipleColumnData?:[]
+  hourStyle?: TextStyle
+  showHourGuide: boolean
+  hourRange?: string
+  multipleColumnData?: []
 }
 
 function _CalendarBody<T extends ICalendarEventBase>({
@@ -81,7 +90,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
   hourStyle = {},
   showHourGuide = true,
   hourRange = '0-23',
-  multipleColumnData
+  multipleColumnData,
 }: CalendarBodyProps<T>) {
   const scrollView = React.useRef<ScrollView>(null)
   const { now } = useNow(!hideNowIndicator)
@@ -131,7 +140,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
   )
 
   const theme = useTheme()
-  
+
   return (
     <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
@@ -139,9 +148,9 @@ function _CalendarBody<T extends ICalendarEventBase>({
         style={[
           {
             height: containerHeight - cellHeight * 3,
-            backgroundColor:theme.palette.backgroundColor,
-            borderWidth:1,
-            borderColor:theme.palette.borderColor
+            backgroundColor: theme.palette.backgroundColor,
+            borderWidth: 1,
+            borderColor: theme.palette.borderColor,
           },
           style,
         ]}
@@ -151,38 +160,77 @@ function _CalendarBody<T extends ICalendarEventBase>({
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
         contentOffset={Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }}
-        
       >
-
         <View
-          style={[u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row'], multipleColumnData && multipleColumnData.length > 0 ? { overflow:'scroll', paddingTop:100} : {}  ]}
+          style={[
+            u['flex-1'],
+            theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
+            multipleColumnData && multipleColumnData.length > 0
+              ? { overflow: 'scroll', paddingTop: 100 }
+              : {},
+          ]}
           {...(Platform.OS === 'web' ? panResponder.panHandlers : {})}
         >
-          {showHourGuide ? <View style={[u['z-20'], u['w-70'], {marginTop:-1}]}>
-            {hoursRange(hourRange).map((hour) => (
-              <HourGuideColumn
-                key={hour}
-                cellHeight={cellHeight}
-                hour={hour}
-                ampm={ampm}
-                hourStyle={hourStyle}
-              />
-            ))}
-          </View> : null}
+          {showHourGuide ? (
+            <View style={[u['z-20'], u['w-70'], { marginTop: -1 }]}>
+              {hoursRange(hourRange).map((hour) => (
+                <HourGuideColumn
+                  key={hour}
+                  cellHeight={cellHeight}
+                  hour={hour}
+                  ampm={ampm}
+                  hourStyle={hourStyle}
+                />
+              ))}
+            </View>
+          ) : null}
 
-          {
-            multipleColumnData && multipleColumnData.length > 0 ? 
-              multipleColumnData.map( (column:any) =>{
+          {multipleColumnData && multipleColumnData.length > 0
+            ? multipleColumnData.map((column: any) => {
                 return dateRange.map((date) => (
-                  <View style={[u['flex-1'], u['overflow-hidden'], {minWidth:Platform.OS !== 'web' ? 100:300, position:'relative', overflow:'visible'}]} key={date.toString()}>
-                    <View style={{ backgroundColor:theme.palette.cellBg, borderLeftWidth:1, borderBottomWidth:1, borderColor:theme.palette.borderColor, height:100, position:'absolute', top:-100, alignItems:'center', justifyContent:'center', paddingVertical:10, width:'100%'}}>
-                      {column.image_url && 
+                  <View
+                    style={[
+                      u['flex-1'],
+                      u['overflow-hidden'],
+                      {
+                        minWidth: Platform.OS !== 'web' ? 100 : 300,
+                        position: 'relative',
+                        overflow: 'visible',
+                      },
+                    ]}
+                    key={date.toString()}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: theme.palette.cellBg,
+                        borderLeftWidth: 1,
+                        borderBottomWidth: 1,
+                        borderColor: theme.palette.borderColor,
+                        height: 100,
+                        position: 'absolute',
+                        top: -100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingVertical: 10,
+                        width: '100%',
+                      }}
+                    >
+                      {column.image_url && (
                         <View>
-                          <Image source={{uri:column.image_url}} style={{ width:50, height:50 , borderRadius:50}} />
-                        </View> 
-                      }
-                      <View style={[ { minWidth:Platform.OS !== 'web' ? 100:200, paddingVertical:10  } ]}>
-                        <Text style={{color:theme.palette.headingColor, textAlign:'center'}}>{column.title}</Text>
+                          <Image
+                            source={{ uri: column.image_url }}
+                            style={{ width: 50, height: 50, borderRadius: 50 }}
+                          />
+                        </View>
+                      )}
+                      <View
+                        style={[
+                          { minWidth: Platform.OS !== 'web' ? 100 : 200, paddingVertical: 10 },
+                        ]}
+                      >
+                        <Text style={{ color: theme.palette.headingColor, textAlign: 'center' }}>
+                          {column.title}
+                        </Text>
                       </View>
                     </View>
                     {hoursRange(hourRange).map((hour, index) => (
@@ -196,42 +244,58 @@ function _CalendarBody<T extends ICalendarEventBase>({
                         calendarCellStyle={calendarCellStyle}
                       />
                     ))}
-                    
+
                     {column.data
-                      .filter((data : T) =>{
-                        return dayjs(data.start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)')
-                      }
-                    )
+                      .filter((data: T) => {
+                        return dayjs(data.start).isBetween(
+                          date.startOf('day'),
+                          date.endOf('day'),
+                          null,
+                          '[)',
+                        )
+                      })
+                      .map((event: T) => {
+                        return {
+                          ...event,
+                          end: dayjs(event.end).isAfter(dayjs(event.start).endOf('day'))
+                            ? dayjs(event.start).endOf('day')
+                            : event.end,
+                        }
+                      })
                       .map(_renderMappedEvent)}
 
                     {/* Render events which starts before this date and ends on this date */}
                     {/* M  T  (W)  T  F  S  S */}
                     {/* S------E              */}
                     {column.data
-                      .filter(
-                        ( (data : T) => {
-                        return dayjs(data.start).isBefore(date.startOf('day')) &&
-                          dayjs(data.end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)')
-                        }
-                      ))
-                      .map((event:T) => ({
+                      .filter((data: T) => {
+                        return (
+                          dayjs(data.start).isBefore(date.startOf('day')) &&
+                          dayjs(data.end).isBetween(
+                            date.startOf('day'),
+                            date.endOf('day'),
+                            null,
+                            '[)',
+                          )
+                        )
+                      })
+                      .map((event: T) => ({
                         ...event,
                         start: dayjs(event.end).startOf('day'),
                       }))
-                      .map(_renderMappedEvent)
-                    }
+                      .map(_renderMappedEvent)}
 
                     {/* Render events which starts before this date and ends after this date */}
                     {/* M  T  (W)  T  F  S  S */}
                     {/*    S-------E          */}
                     {column.data
-                      .filter(
-                        (data:T) => {
-                          return dayjs(data.start).isBefore(date.startOf('day')) &&
+                      .filter((data: T) => {
+                        return (
+                          dayjs(data.start).isBefore(date.startOf('day')) &&
                           dayjs(data.end).isAfter(date.endOf('day'))
-                        }
-                      )
-                      .map((event:T) => ({
+                        )
+                      })
+                      .map((event: T) => ({
                         ...event,
                         start: dayjs(event.end).startOf('day'),
                         end: dayjs(event.end).endOf('day'),
@@ -250,8 +314,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
                   </View>
                 ))
               })
-            : 
-              dateRange.map((date) => (
+            : dateRange.map((date) => (
                 <View style={[u['flex-1'], u['overflow-hidden']]} key={date.toString()}>
                   {hoursRange(hourRange).map((hour, index) => (
                     <HourGuideCell
@@ -314,11 +377,8 @@ function _CalendarBody<T extends ICalendarEventBase>({
                       ]}
                     />
                   )}
-                  
                 </View>
-                
-              ))
-          } 
+              ))}
         </View>
       </ScrollView>
     </React.Fragment>

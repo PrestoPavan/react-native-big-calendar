@@ -7,7 +7,7 @@ import { Alert, Dimensions, View } from 'react-native'
 
 import { Calendar } from '../src'
 import { CONTROL_HEIGHT, Control } from './components/Control'
-import { customEventRenderer, events, spanningEvents, multipleUserEvents } from './events'
+import { customEventRenderer, events, multipleUserEvents, spanningEvents } from './events'
 import { useEvents } from './hooks'
 import { styles } from './styles'
 import { themes } from './themes'

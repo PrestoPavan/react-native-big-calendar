@@ -31,7 +31,7 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
   {
     title: 'with color prop',
     start: dayjs().set('hour', 16).set('minute', 0).toDate(),
-    end: dayjs().set('hour', 18).set('minute', 30).toDate(),
+    end: dayjs().add(1, 'day').set('hour', 18).set('minute', 30).toDate(),
     color: 'purple',
   },
   {
@@ -60,70 +60,73 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
 export const multipleUserEvents = [
   {
     title: 'User 1',
-    image_url:'https://randomuser.me/api/portraits/med/men/71.jpg',
-    data:[{
-      title: 'with color prop',
-      start: dayjs().set('hour', 16).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 18).set('minute', 30).toDate(),
-      color: 'purple',
-    },
-    {
-      title: 'Repair my car',
-      start: dayjs().add(1, 'day').set('hour', 7).set('minute', 45).toDate(),
-      end: dayjs().add(1, 'day').set('hour', 13).set('minute', 30).toDate(),
-    },
-    {
-      title: 'Meet Realtor',
-      start: dayjs().add(1, 'day').set('hour', 8).set('minute', 25).toDate(),
-      end: dayjs().add(1, 'day').set('hour', 9).set('minute', 55).toDate(),
-    },
-    {
-      title: 'Laundry',
-      start: dayjs().add(1, 'day').set('hour', 8).set('minute', 25).toDate(),
-      end: dayjs().add(1, 'day').set('hour', 11).set('minute', 0).toDate(),
-    },
-    {
-      title: "Doctor's appointment",
-      start: dayjs().set('hour', 13).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 14).set('minute', 15).toDate(),
-      children: eventNotes,
-    }]
+    image_url: 'https://randomuser.me/api/portraits/med/men/71.jpg',
+    data: [
+      {
+        title: 'with color prop',
+        start: dayjs().set('hour', 16).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 18).set('minute', 30).toDate(),
+        color: 'purple',
+      },
+      {
+        title: 'Repair my car',
+        start: dayjs().add(1, 'day').set('hour', 7).set('minute', 45).toDate(),
+        end: dayjs().add(1, 'day').set('hour', 13).set('minute', 30).toDate(),
+      },
+      {
+        title: 'Meet Realtor',
+        start: dayjs().add(1, 'day').set('hour', 8).set('minute', 25).toDate(),
+        end: dayjs().add(1, 'day').set('hour', 9).set('minute', 55).toDate(),
+      },
+      {
+        title: 'Laundry',
+        start: dayjs().add(1, 'day').set('hour', 8).set('minute', 25).toDate(),
+        end: dayjs().add(1, 'day').set('hour', 11).set('minute', 0).toDate(),
+      },
+      {
+        title: "Doctor's appointment",
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+    ],
   },
   {
     title: 'User 2',
-    image_url:'https://randomuser.me/api/portraits/med/men/72.jpg',
-    data:[
-    {
-      title: "Doctor's appointment",
-      start: dayjs().set('hour', 13).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 14).set('minute', 15).toDate(),
-      children: eventNotes,
-    },
-    {
-      title: "Haircut",
-      start: dayjs().set('hour', 6).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 7).set('minute', 15).toDate(),
-      children: eventNotes,
-    }]
+    image_url: 'https://randomuser.me/api/portraits/med/men/72.jpg',
+    data: [
+      {
+        title: "Doctor's appointment",
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+      {
+        title: 'Haircut',
+        start: dayjs().set('hour', 6).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 7).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+    ],
   },
   {
     title: 'User 3',
-    image_url:'https://randomuser.me/api/portraits/med/men/73.jpg',
-    data:[
-    {
-      title: "appointment",
-      start: dayjs().set('hour', 13).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 14).set('minute', 15).toDate(),
-      children: eventNotes,
-    },
-    {
-      title: "Haircut",
-      start: dayjs().set('hour', 2).set('minute', 0).toDate(),
-      end: dayjs().set('hour', 7).set('minute', 15).toDate(),
-      children: eventNotes,
-    }]
-  }
-  
+    image_url: 'https://randomuser.me/api/portraits/med/men/73.jpg',
+    data: [
+      {
+        title: 'appointment',
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+      {
+        title: 'Haircut',
+        start: dayjs().set('hour', 23).set('minute', 0).toDate(),
+        end: dayjs().add(1, 'day').set('hour', 2).set('minute', 0).toDate(),
+        children: eventNotes,
+      },
+    ],
+  },
 ]
 
 export const spanningEvents: Array<ICalendarEventBase & { color?: string }> = [
