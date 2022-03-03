@@ -96,6 +96,7 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
   showHourGuide?:boolean
   hourRange?:string
   multipleColumnData?:[]
+  numberOfColumn?:number
 }
 
 function _CalendarContainer<T extends ICalendarEventBase>({
@@ -140,6 +141,7 @@ function _CalendarContainer<T extends ICalendarEventBase>({
   showHourGuide= true,
   hourRange,
   multipleColumnData,
+  numberOfColumn
 }: CalendarContainerProps<T>) {
   const [targetDate, setTargetDate] = React.useState(dayjs(date))
 
@@ -294,6 +296,7 @@ function _CalendarContainer<T extends ICalendarEventBase>({
         showHourGuide={showHourGuide}
         hourRange={hourRange}
         multipleColumnData={multipleColumnData}
+        numberOfColumn={numberOfColumn}
       />
     </React.Fragment>
   )

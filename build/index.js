@@ -701,9 +701,10 @@ var styles = reactNative.StyleSheet.create({
     },
 });
 function _CalendarBody(_a) {
-    var containerHeight = _a.containerHeight, cellHeight = _a.cellHeight, dateRange = _a.dateRange, style = _a.style, onPressCell = _a.onPressCell, events = _a.events, onPressEvent = _a.onPressEvent, eventCellStyle = _a.eventCellStyle, calendarCellStyle = _a.calendarCellStyle, ampm = _a.ampm, showTime = _a.showTime, scrollOffsetMinutes = _a.scrollOffsetMinutes, onSwipeHorizontal = _a.onSwipeHorizontal, hideNowIndicator = _a.hideNowIndicator, overlapOffset = _a.overlapOffset, renderEvent = _a.renderEvent, _b = _a.headerComponent, headerComponent = _b === void 0 ? null : _b, _c = _a.headerComponentStyle, headerComponentStyle = _c === void 0 ? {} : _c, _d = _a.hourStyle, hourStyle = _d === void 0 ? {} : _d, _e = _a.showHourGuide, showHourGuide = _e === void 0 ? true : _e, _f = _a.hourRange, hourRange = _f === void 0 ? '0-23' : _f, multipleColumnData = _a.multipleColumnData;
+    var containerHeight = _a.containerHeight, cellHeight = _a.cellHeight, dateRange = _a.dateRange, style = _a.style, onPressCell = _a.onPressCell, events = _a.events, onPressEvent = _a.onPressEvent, eventCellStyle = _a.eventCellStyle, calendarCellStyle = _a.calendarCellStyle, ampm = _a.ampm, showTime = _a.showTime, scrollOffsetMinutes = _a.scrollOffsetMinutes, onSwipeHorizontal = _a.onSwipeHorizontal, hideNowIndicator = _a.hideNowIndicator, overlapOffset = _a.overlapOffset, renderEvent = _a.renderEvent, _b = _a.headerComponent, headerComponent = _b === void 0 ? null : _b, _c = _a.headerComponentStyle, headerComponentStyle = _c === void 0 ? {} : _c, _d = _a.hourStyle, hourStyle = _d === void 0 ? {} : _d, _e = _a.showHourGuide, showHourGuide = _e === void 0 ? true : _e, _f = _a.hourRange, hourRange = _f === void 0 ? '0-23' : _f, multipleColumnData = _a.multipleColumnData, numberOfColumn = _a.numberOfColumn;
     var scrollView = React__namespace.useRef(null);
     var now = useNow(!hideNowIndicator).now;
+    var _g = React__namespace.useState(0), page = _g[0], setPage = _g[1];
     React__namespace.useEffect(function () {
         if (scrollView.current && scrollOffsetMinutes && reactNative.Platform.OS !== 'ios') {
             // We add delay here to work correct on React Native
@@ -726,6 +727,18 @@ function _CalendarBody(_a) {
     }, [onPressCell]);
     var _renderMappedEvent = function (event) { return (React__namespace.createElement(CalendarEvent, { key: "".concat(event.start).concat(event.title).concat(event.end), event: event, onPressEvent: onPressEvent, eventCellStyle: eventCellStyle, showTime: showTime, eventCount: getCountOfEventsAtEvent(event, events), eventOrder: getOrderOfEvent(event, events), overlapOffset: overlapOffset, renderEvent: renderEvent, ampm: ampm })); };
     var theme = useTheme();
+    var multipleData = [];
+    var defaultNoOfColumns = numberOfColumn || 3;
+    if (multipleColumnData && multipleColumnData.length > 0) {
+        if (multipleColumnData.length >= defaultNoOfColumns) {
+            for (var i = 0; i < multipleColumnData.length; i += defaultNoOfColumns) {
+                multipleData.push(multipleColumnData.slice(i, i + defaultNoOfColumns));
+            }
+        }
+        else {
+            multipleData.push(multipleColumnData);
+        }
+    }
     return (React__namespace.createElement(React__namespace.Fragment, null,
         headerComponent != null ? React__namespace.createElement(reactNative.View, { style: headerComponentStyle }, headerComponent) : null,
         React__namespace.createElement(reactNative.ScrollView, __assign({ style: [
@@ -736,45 +749,50 @@ function _CalendarBody(_a) {
                     borderColor: theme.palette.borderColor,
                 },
                 style,
-            ], ref: scrollView, scrollEventThrottle: 32 }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: reactNative.Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 } }),
+            ], ref: scrollView, scrollEventThrottle: 32 }, (reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: reactNative.Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }, stickyHeaderIndices: [0] }),
+            multipleColumnData && multipleColumnData.length > 0 ?
+                React__namespace.createElement(reactNative.View, { style: { flexDirection: 'row' } },
+                    React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { height: 100, backgroundColor: theme.palette.cellBg, }] }),
+                    multipleData[page].map(function (column) {
+                        return (React__namespace.createElement(reactNative.View, { style: {
+                                backgroundColor: theme.palette.cellBg,
+                                borderLeftWidth: 1,
+                                borderBottomWidth: 1,
+                                borderColor: theme.palette.borderColor,
+                                height: 100,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                paddingVertical: 10,
+                                width: 150,
+                                flex: 1
+                            } },
+                            column.image_url && (React__namespace.createElement(reactNative.View, null,
+                                React__namespace.createElement(reactNative.Image, { source: { uri: column.image_url }, style: { width: 50, height: 50, borderRadius: 50 } }))),
+                            React__namespace.createElement(reactNative.View, { style: [
+                                    { width: 150, paddingVertical: 10 },
+                                ] },
+                                React__namespace.createElement(reactNative.Text, { style: { color: theme.palette.headingColor, textAlign: 'center' } }, column.title))));
+                    }))
+                : React__namespace.createElement(reactNative.View, null),
             React__namespace.createElement(reactNative.View, __assign({ style: [
                     u['flex-1'],
                     theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
                     multipleColumnData && multipleColumnData.length > 0
-                        ? { overflow: 'scroll', paddingTop: 100 }
+                        ? { overflow: 'scroll', }
                         : {},
                 ] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
                 showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
                 multipleColumnData && multipleColumnData.length > 0
-                    ? multipleColumnData.map(function (column) {
+                    ? multipleData[page].map(function (column) {
                         return dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [
                                 u['flex-1'],
                                 u['overflow-hidden'],
                                 {
-                                    minWidth: reactNative.Platform.OS !== 'web' ? 100 : 300,
+                                    width: 150,
                                     position: 'relative',
                                     overflow: 'visible',
                                 },
                             ], key: date.toString() },
-                            React__namespace.createElement(reactNative.View, { style: {
-                                    backgroundColor: theme.palette.cellBg,
-                                    borderLeftWidth: 1,
-                                    borderBottomWidth: 1,
-                                    borderColor: theme.palette.borderColor,
-                                    height: 100,
-                                    position: 'absolute',
-                                    top: -100,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    paddingVertical: 10,
-                                    width: '100%',
-                                } },
-                                column.image_url && (React__namespace.createElement(reactNative.View, null,
-                                    React__namespace.createElement(reactNative.Image, { source: { uri: column.image_url }, style: { width: 50, height: 50, borderRadius: 50 } }))),
-                                React__namespace.createElement(reactNative.View, { style: [
-                                        { minWidth: reactNative.Platform.OS !== 'web' ? 100 : 200, paddingVertical: 10 },
-                                    ] },
-                                    React__namespace.createElement(reactNative.Text, { style: { color: theme.palette.headingColor, textAlign: 'center' } }, column.title))),
                             hoursRange(hourRange).map(function (hour, index) { return (React__namespace.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
                             column.data
                                 .filter(function (data) {
@@ -834,7 +852,24 @@ function _CalendarBody(_a) {
                                 styles.nowIndicator,
                                 { backgroundColor: theme.palette.nowIndicator },
                                 { top: "".concat(getRelativeTopInDay(now), "%") },
-                            ] })))); })))));
+                            ] })))); }))),
+        multipleData.length > 1 ?
+            React__namespace.createElement(reactNative.View, { style: { flexDirection: "row", alignItems: 'center', justifyContent: 'flex-end', paddingTop: 20 } },
+                React__namespace.createElement(reactNative.Pressable, { onPress: function () {
+                        if (page - 1 >= 0) {
+                            setPage(page - 1);
+                        }
+                    } },
+                    React__namespace.createElement(reactNative.View, null,
+                        React__namespace.createElement(reactNative.Text, { style: { color: theme.palette.headingColor } }, "< PREV"))),
+                React__namespace.createElement(reactNative.View, { style: { width: 20 } }),
+                React__namespace.createElement(reactNative.Pressable, { onPress: function () {
+                        if (multipleData[page + 1])
+                            setPage(page + 1);
+                    } },
+                    React__namespace.createElement(reactNative.View, null,
+                        React__namespace.createElement(reactNative.Text, null, "NEXT >"))))
+            : null));
 }
 var CalendarBody = typedMemo(_CalendarBody);
 
@@ -1075,7 +1110,7 @@ function _CalendarHeaderForMonthView(_a) {
 var CalendarHeaderForMonthView = typedMemo(_CalendarHeaderForMonthView);
 
 function _CalendarContainer(_a) {
-    var _b = _a.events, events = _b === void 0 ? [] : _b, height = _a.height, hourRowHeight = _a.hourRowHeight, _c = _a.ampm, ampm = _c === void 0 ? false : _c, date = _a.date, eventCellStyle = _a.eventCellStyle, calendarCellStyle = _a.calendarCellStyle, calendarCellTextStyle = _a.calendarCellTextStyle, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, _e = _a.hideNowIndicator, hideNowIndicator = _e === void 0 ? false : _e, _f = _a.showAdjacentMonths, showAdjacentMonths = _f === void 0 ? false : _f, _g = _a.mode, mode = _g === void 0 ? 'week' : _g, overlapOffset = _a.overlapOffset, _h = _a.scrollOffsetMinutes, scrollOffsetMinutes = _h === void 0 ? 0 : _h, _j = _a.showTime, showTime = _j === void 0 ? true : _j, _k = _a.headerContainerStyle, headerContainerStyle = _k === void 0 ? {} : _k, _l = _a.headerContentStyle, headerContentStyle = _l === void 0 ? {} : _l, _m = _a.dayHeaderStyle, dayHeaderStyle = _m === void 0 ? {} : _m, _o = _a.dayHeaderHighlightColor, dayHeaderHighlightColor = _o === void 0 ? '' : _o, _p = _a.weekDayHeaderHighlightColor, weekDayHeaderHighlightColor = _p === void 0 ? '' : _p, _q = _a.bodyContainerStyle, bodyContainerStyle = _q === void 0 ? {} : _q, _r = _a.swipeEnabled, swipeEnabled = _r === void 0 ? true : _r, _s = _a.weekStartsOn, weekStartsOn = _s === void 0 ? 0 : _s, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell, onPressDateHeader = _a.onPressDateHeader, onPressEvent = _a.onPressEvent, renderEvent = _a.renderEvent, _t = _a.renderHeader, HeaderComponent = _t === void 0 ? CalendarHeader : _t, _u = _a.renderHeaderForMonthView, HeaderComponentForMonthView = _u === void 0 ? CalendarHeaderForMonthView : _u, _v = _a.weekEndsOn, weekEndsOn = _v === void 0 ? 6 : _v, _w = _a.maxVisibleEventCount, maxVisibleEventCount = _w === void 0 ? 3 : _w, _x = _a.eventMinHeightForMonthView, eventMinHeightForMonthView = _x === void 0 ? 22 : _x, activeDate = _a.activeDate, _y = _a.headerComponent, headerComponent = _y === void 0 ? null : _y, _z = _a.headerComponentStyle, headerComponentStyle = _z === void 0 ? {} : _z, _0 = _a.hourStyle, hourStyle = _0 === void 0 ? {} : _0, _1 = _a.showAllDayEventCell, showAllDayEventCell = _1 === void 0 ? true : _1, _2 = _a.showHourGuide, showHourGuide = _2 === void 0 ? true : _2, hourRange = _a.hourRange, multipleColumnData = _a.multipleColumnData;
+    var _b = _a.events, events = _b === void 0 ? [] : _b, height = _a.height, hourRowHeight = _a.hourRowHeight, _c = _a.ampm, ampm = _c === void 0 ? false : _c, date = _a.date, eventCellStyle = _a.eventCellStyle, calendarCellStyle = _a.calendarCellStyle, calendarCellTextStyle = _a.calendarCellTextStyle, _d = _a.locale, locale = _d === void 0 ? 'en' : _d, _e = _a.hideNowIndicator, hideNowIndicator = _e === void 0 ? false : _e, _f = _a.showAdjacentMonths, showAdjacentMonths = _f === void 0 ? false : _f, _g = _a.mode, mode = _g === void 0 ? 'week' : _g, overlapOffset = _a.overlapOffset, _h = _a.scrollOffsetMinutes, scrollOffsetMinutes = _h === void 0 ? 0 : _h, _j = _a.showTime, showTime = _j === void 0 ? true : _j, _k = _a.headerContainerStyle, headerContainerStyle = _k === void 0 ? {} : _k, _l = _a.headerContentStyle, headerContentStyle = _l === void 0 ? {} : _l, _m = _a.dayHeaderStyle, dayHeaderStyle = _m === void 0 ? {} : _m, _o = _a.dayHeaderHighlightColor, dayHeaderHighlightColor = _o === void 0 ? '' : _o, _p = _a.weekDayHeaderHighlightColor, weekDayHeaderHighlightColor = _p === void 0 ? '' : _p, _q = _a.bodyContainerStyle, bodyContainerStyle = _q === void 0 ? {} : _q, _r = _a.swipeEnabled, swipeEnabled = _r === void 0 ? true : _r, _s = _a.weekStartsOn, weekStartsOn = _s === void 0 ? 0 : _s, onChangeDate = _a.onChangeDate, onPressCell = _a.onPressCell, onPressDateHeader = _a.onPressDateHeader, onPressEvent = _a.onPressEvent, renderEvent = _a.renderEvent, _t = _a.renderHeader, HeaderComponent = _t === void 0 ? CalendarHeader : _t, _u = _a.renderHeaderForMonthView, HeaderComponentForMonthView = _u === void 0 ? CalendarHeaderForMonthView : _u, _v = _a.weekEndsOn, weekEndsOn = _v === void 0 ? 6 : _v, _w = _a.maxVisibleEventCount, maxVisibleEventCount = _w === void 0 ? 3 : _w, _x = _a.eventMinHeightForMonthView, eventMinHeightForMonthView = _x === void 0 ? 22 : _x, activeDate = _a.activeDate, _y = _a.headerComponent, headerComponent = _y === void 0 ? null : _y, _z = _a.headerComponentStyle, headerComponentStyle = _z === void 0 ? {} : _z, _0 = _a.hourStyle, hourStyle = _0 === void 0 ? {} : _0, _1 = _a.showAllDayEventCell, showAllDayEventCell = _1 === void 0 ? true : _1, _2 = _a.showHourGuide, showHourGuide = _2 === void 0 ? true : _2, hourRange = _a.hourRange, multipleColumnData = _a.multipleColumnData, numberOfColumn = _a.numberOfColumn;
     var _3 = React__default['default'].useState(dayjs__default['default'](date)), targetDate = _3[0], setTargetDate = _3[1];
     React__default['default'].useEffect(function () {
         if (date) {
@@ -1147,7 +1182,7 @@ function _CalendarContainer(_a) {
     var headerProps = __assign(__assign({}, commonProps), { style: headerContainerStyle, allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader, activeDate: activeDate, headerContentStyle: headerContentStyle, dayHeaderStyle: dayHeaderStyle, dayHeaderHighlightColor: dayHeaderHighlightColor, weekDayHeaderHighlightColor: weekDayHeaderHighlightColor, showAllDayEventCell: showAllDayEventCell, multipleColumnData: multipleColumnData });
     return (React__default['default'].createElement(React__default['default'].Fragment, null,
         !multipleColumnData && React__default['default'].createElement(HeaderComponent, __assign({}, headerProps)),
-        React__default['default'].createElement(CalendarBody, __assign({}, commonProps, { style: bodyContainerStyle, containerHeight: height, events: daytimeEvents, eventCellStyle: eventCellStyle, calendarCellStyle: calendarCellStyle, hideNowIndicator: hideNowIndicator, overlapOffset: overlapOffset, scrollOffsetMinutes: scrollOffsetMinutes, ampm: ampm, showTime: showTime, onPressCell: onPressCell, onPressEvent: onPressEvent, onSwipeHorizontal: onSwipeHorizontal, renderEvent: renderEvent, headerComponent: headerComponent, headerComponentStyle: headerComponentStyle, hourStyle: hourStyle, showHourGuide: showHourGuide, hourRange: hourRange, multipleColumnData: multipleColumnData }))));
+        React__default['default'].createElement(CalendarBody, __assign({}, commonProps, { style: bodyContainerStyle, containerHeight: height, events: daytimeEvents, eventCellStyle: eventCellStyle, calendarCellStyle: calendarCellStyle, hideNowIndicator: hideNowIndicator, overlapOffset: overlapOffset, scrollOffsetMinutes: scrollOffsetMinutes, ampm: ampm, showTime: showTime, onPressCell: onPressCell, onPressEvent: onPressEvent, onSwipeHorizontal: onSwipeHorizontal, renderEvent: renderEvent, headerComponent: headerComponent, headerComponentStyle: headerComponentStyle, hourStyle: hourStyle, showHourGuide: showHourGuide, hourRange: hourRange, multipleColumnData: multipleColumnData, numberOfColumn: numberOfColumn }))));
 }
 var CalendarContainer = typedMemo(_CalendarContainer);
 

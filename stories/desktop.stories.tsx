@@ -49,6 +49,7 @@ storiesOf('showcase Desktop', module)
         ampm
         hourRowHeight={70}
         multipleColumnData={multipleUserEvents}
+        numberOfColumn={4}
       />
     </View>
   ))

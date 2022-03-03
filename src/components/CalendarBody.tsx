@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextStyle,
+  Pressable,
   View,
   ViewStyle,
 } from 'react-native'
@@ -65,7 +66,8 @@ interface CalendarBodyProps<T extends ICalendarEventBase> {
   hourStyle?: TextStyle
   showHourGuide: boolean
   hourRange?: string
-  multipleColumnData?: []
+  multipleColumnData?: [],
+  numberOfColumn?:number
 }
 
 function _CalendarBody<T extends ICalendarEventBase>({
@@ -91,10 +93,11 @@ function _CalendarBody<T extends ICalendarEventBase>({
   showHourGuide = true,
   hourRange = '0-23',
   multipleColumnData,
+  numberOfColumn
 }: CalendarBodyProps<T>) {
   const scrollView = React.useRef<ScrollView>(null)
   const { now } = useNow(!hideNowIndicator)
-
+  const [page, setPage] = React.useState(0);
   React.useEffect(() => {
     if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
       // We add delay here to work correct on React Native
@@ -140,10 +143,22 @@ function _CalendarBody<T extends ICalendarEventBase>({
   )
 
   const theme = useTheme()
+  var multipleData:any = [];
+  let defaultNoOfColumns:any = numberOfColumn || 3
+  if(multipleColumnData && multipleColumnData.length > 0 ){
+    if(multipleColumnData.length >= defaultNoOfColumns ){
+      for (var i=0; i<multipleColumnData.length; i+=defaultNoOfColumns) {
+        multipleData.push(multipleColumnData.slice(i,i+defaultNoOfColumns));
+      }
+    } else {
+      multipleData.push(multipleColumnData)
+    }
+  }
 
   return (
     <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
+
       <ScrollView
         style={[
           {
@@ -160,13 +175,56 @@ function _CalendarBody<T extends ICalendarEventBase>({
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
         contentOffset={Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }}
+        stickyHeaderIndices={[0]}
       >
+        { multipleColumnData && multipleColumnData.length > 0 ?   
+          <View style={{ flexDirection:'row' }}>
+            <View style={[u['z-20'], u['w-70'], { height:100,backgroundColor: theme.palette.cellBg,}]} />
+            {multipleData[page].map((column: any) => {
+                return (
+                  <View
+                    style={{
+                      backgroundColor: theme.palette.cellBg,
+                      borderLeftWidth: 1,
+                      borderBottomWidth: 1,
+                      borderColor: theme.palette.borderColor,
+                      height: 100,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingVertical: 10,
+                      width: 150,  
+                      flex:1
+                    }}
+                  >
+                        {column.image_url && (
+                          <View>
+                            <Image
+                              source={{ uri: column.image_url }}
+                              style={{ width: 50, height: 50, borderRadius: 50 }}
+                            />
+                          </View>
+                        )}
+                        <View
+                          style={[
+                            { width:  150, paddingVertical: 10 },
+                          ]}
+                        >
+                          <Text style={{ color: theme.palette.headingColor, textAlign: 'center' }}>
+                            {column.title}
+                          </Text>
+                        </View>
+                  </View>
+                )
+              })}
+          </View>
+          : <View /> 
+        }
         <View
           style={[
             u['flex-1'],
             theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
             multipleColumnData && multipleColumnData.length > 0
-              ? { overflow: 'scroll', paddingTop: 100 }
+              ? { overflow: 'scroll',  }
               : {},
           ]}
           {...(Platform.OS === 'web' ? panResponder.panHandlers : {})}
@@ -184,23 +242,22 @@ function _CalendarBody<T extends ICalendarEventBase>({
               ))}
             </View>
           ) : null}
-
           {multipleColumnData && multipleColumnData.length > 0
-            ? multipleColumnData.map((column: any) => {
+            ? multipleData[page].map((column: any) => {
                 return dateRange.map((date) => (
                   <View
                     style={[
                       u['flex-1'],
                       u['overflow-hidden'],
                       {
-                        minWidth: Platform.OS !== 'web' ? 100 : 300,
+                        width:150,
                         position: 'relative',
                         overflow: 'visible',
                       },
                     ]}
                     key={date.toString()}
                   >
-                    <View
+                    {/* <View
                       style={{
                         backgroundColor: theme.palette.cellBg,
                         borderLeftWidth: 1,
@@ -208,7 +265,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
                         borderColor: theme.palette.borderColor,
                         height: 100,
                         position: 'absolute',
-                        top: -100,
+                        top: 0,
                         alignItems: 'center',
                         justifyContent: 'center',
                         paddingVertical: 10,
@@ -232,7 +289,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
                           {column.title}
                         </Text>
                       </View>
-                    </View>
+                    </View> */}
                     {hoursRange(hourRange).map((hour, index) => (
                       <HourGuideCell
                         key={hour}
@@ -381,6 +438,30 @@ function _CalendarBody<T extends ICalendarEventBase>({
               ))}
         </View>
       </ScrollView>
+      {
+        multipleData.length > 1 ? 
+          <View style={{flexDirection:"row", alignItems:'center', justifyContent:'flex-end',  paddingTop:20 }}>
+            <Pressable onPress={()=>{
+                if( page-1 >= 0){
+                  setPage(page-1)
+                } 
+              }} >
+              <View>
+                <Text style={{color:theme.palette.headingColor}}>{`< PREV`}</Text>
+              </View>
+            </Pressable>
+            <View style={{ width:20 }} />
+            <Pressable onPress={()=>{
+                if(multipleData[page+1]) 
+                  setPage(page+1)
+              }} >
+              <View>
+                <Text>{`NEXT >`}</Text>
+              </View>
+            </Pressable>
+          </View>
+        : null
+      }
     </React.Fragment>
   )
 }

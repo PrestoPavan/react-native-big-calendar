@@ -56,7 +56,8 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
     showHourGuide?: boolean;
     hourRange?: string;
     multipleColumnData?: [];
+    numberOfColumn?: number;
 }
-declare function _CalendarContainer<T extends ICalendarEventBase>({ events, height, hourRowHeight, ampm, date, eventCellStyle, calendarCellStyle, calendarCellTextStyle, locale, hideNowIndicator, showAdjacentMonths, mode, overlapOffset, scrollOffsetMinutes, showTime, headerContainerStyle, headerContentStyle, dayHeaderStyle, dayHeaderHighlightColor, weekDayHeaderHighlightColor, bodyContainerStyle, swipeEnabled, weekStartsOn, onChangeDate, onPressCell, onPressDateHeader, onPressEvent, renderEvent, renderHeader: HeaderComponent, renderHeaderForMonthView: HeaderComponentForMonthView, weekEndsOn, maxVisibleEventCount, eventMinHeightForMonthView, activeDate, headerComponent, headerComponentStyle, hourStyle, showAllDayEventCell, showHourGuide, hourRange, multipleColumnData, }: CalendarContainerProps<T>): JSX.Element;
+declare function _CalendarContainer<T extends ICalendarEventBase>({ events, height, hourRowHeight, ampm, date, eventCellStyle, calendarCellStyle, calendarCellTextStyle, locale, hideNowIndicator, showAdjacentMonths, mode, overlapOffset, scrollOffsetMinutes, showTime, headerContainerStyle, headerContentStyle, dayHeaderStyle, dayHeaderHighlightColor, weekDayHeaderHighlightColor, bodyContainerStyle, swipeEnabled, weekStartsOn, onChangeDate, onPressCell, onPressDateHeader, onPressEvent, renderEvent, renderHeader: HeaderComponent, renderHeaderForMonthView: HeaderComponentForMonthView, weekEndsOn, maxVisibleEventCount, eventMinHeightForMonthView, activeDate, headerComponent, headerComponentStyle, hourStyle, showAllDayEventCell, showHourGuide, hourRange, multipleColumnData, numberOfColumn }: CalendarContainerProps<T>): JSX.Element;
 export declare const CalendarContainer: typeof _CalendarContainer;
 export {};

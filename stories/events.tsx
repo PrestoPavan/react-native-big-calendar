@@ -111,7 +111,61 @@ export const multipleUserEvents = [
   },
   {
     title: 'User 3',
-    image_url: 'https://randomuser.me/api/portraits/med/men/73.jpg',
+    image_url: 'https://randomuser.me/api/portraits/med/men/22.jpg',
+    data: [
+      {
+        title: "Doctor's appointment",
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+      {
+        title: 'Haircut',
+        start: dayjs().set('hour', 6).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 7).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+    ],
+  },
+  {
+    title: 'User 4',
+    image_url: 'https://randomuser.me/api/portraits/med/men/2.jpg',
+    data: [
+      {
+        title: "Doctor's appointment",
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+      {
+        title: 'Haircut',
+        start: dayjs().set('hour', 6).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 7).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+    ],
+  },
+  {
+    title: 'User 5',
+    image_url: 'https://randomuser.me/api/portraits/med/men/23.jpg',
+    data: [
+      {
+        title: 'appointment',
+        start: dayjs().set('hour', 13).set('minute', 0).toDate(),
+        end: dayjs().set('hour', 14).set('minute', 15).toDate(),
+        children: eventNotes,
+      },
+      {
+        title: 'Haircut',
+        start: dayjs().set('hour', 23).set('minute', 55).toDate(),
+        end: dayjs().add(1, 'day').set('hour', 2).set('minute', 0).toDate(),
+        children: eventNotes,
+      },
+    ],
+  },
+  {
+    title: 'User 6',
+    image_url: 'https://randomuser.me/api/portraits/med/men/75.jpg',
     data: [
       {
         title: 'appointment',
