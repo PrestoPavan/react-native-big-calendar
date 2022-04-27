@@ -69,7 +69,7 @@ var defaultTheme = {
             100: '#f5f5f5',
             200: '#D1D1D1',
             300: '#e0e0e0',
-            // 400: '#bdbdbd',
+            400: '#CCCCCC',
             500: '#9e9e9e',
             // 600: '#757575',
             // 700: '#616161',
@@ -324,12 +324,52 @@ function getDatesInNextOneDay(date, locale) {
 var hours = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ];
+function prestoHourRange(range, interval, currentDate) {
+    if (currentDate === void 0) { currentDate = dayjs().startOf('d').toISOString(); }
+    var result = [];
+    var rangeArray = range.split('-');
+    var diff = rangeArray[1] - rangeArray[0];
+    var timeIntervalInSeconds = 60000 * interval;
+    var startTime = dayjs(currentDate).hour(rangeArray[0]).startOf('h').valueOf();
+    for (var i = 0; i < Number(diff * (60 / interval)); i++) {
+        var endTime = startTime + timeIntervalInSeconds;
+        if (i == 0) {
+            result.push({
+                startTime: dayjs(startTime),
+                endTime: dayjs(endTime)
+            });
+            startTime += timeIntervalInSeconds;
+        }
+        else {
+            result.push({
+                startTime: dayjs(startTime),
+                endTime: dayjs(endTime)
+            });
+            startTime += timeIntervalInSeconds;
+        }
+    }
+    return result;
+}
 function hoursRange(range) {
     var rangeArray = range.split('-');
     var result = [];
     for (var i = Number(rangeArray[0]); i <= Number(rangeArray[1]); i++) {
         result.push(i);
     }
+    return result;
+}
+function formatEventData(data, hoursRange) {
+    var result = hoursRange.map(function (timeObj) {
+        var values = [];
+        data.map(function (item) {
+            if (dayjs(item.startDate).isSame(timeObj.startTime) ||
+                (dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime)) ||
+                (dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime))) {
+                values.push(item);
+            }
+        });
+        return __assign(__assign({}, timeObj), { data: values });
+    });
     return result;
 }
 function formatHour(hour, ampm) {
@@ -660,7 +700,7 @@ var _HourGuideColumn = function (_a) {
 };
 var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
 
-var styles = StyleSheet.create({
+var styles$1 = StyleSheet.create({
     nowIndicator: {
         position: 'absolute',
         zIndex: 10000,
@@ -787,7 +827,7 @@ function _CalendarBody(_a) {
                                 .map(function (event) { return (__assign(__assign({}, event), { start: dayjs(event.end).startOf('day'), end: dayjs(event.end).endOf('day') })); })
                                 .map(_renderMappedEvent),
                             isToday(date) && !hideNowIndicator && (React.createElement(View, { style: [
-                                    styles.nowIndicator,
+                                    styles$1.nowIndicator,
                                     { backgroundColor: theme.palette.nowIndicator },
                                     { top: "".concat(getRelativeTopInDay(now), "%") },
                                 ] })))); });
@@ -817,7 +857,7 @@ function _CalendarBody(_a) {
                             .map(function (event) { return (__assign(__assign({}, event), { start: dayjs(event.end).startOf('day'), end: dayjs(event.end).endOf('day') })); })
                             .map(_renderMappedEvent),
                         isToday(date) && !hideNowIndicator && (React.createElement(View, { style: [
-                                styles.nowIndicator,
+                                styles$1.nowIndicator,
                                 { backgroundColor: theme.palette.nowIndicator },
                                 { top: "".concat(getRelativeTopInDay(now), "%") },
                             ] })))); }))),
@@ -969,6 +1009,167 @@ function _CalendarBodyForMonthView(_a) {
             ]); }, []))); }))); })));
 }
 var CalendarBodyForMonthView = typedMemo(_CalendarBodyForMonthView);
+
+// import { GestureHandlerRootView } from 'react-native-gesture-handler';
+var styles = StyleSheet.create({
+    nowIndicator: {
+        position: 'absolute',
+        zIndex: 10000,
+        height: 2,
+        width: '100%',
+    },
+    container: {
+        flex: 1,
+        padding: 12,
+        paddingTop: 40,
+        justifyContent: 'space-evenly',
+    },
+    centeredContent: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    receivingZone: {
+        height: 200,
+        borderRadius: 10,
+    },
+    receiving: {
+        borderColor: 'red',
+        borderWidth: 2,
+    },
+    incomingPayload: {
+        marginTop: 10,
+        fontSize: 24,
+    },
+    received: {
+        marginTop: 10,
+        fontSize: 18,
+    },
+    palette: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+    },
+    draggableBox: {
+        width: 60,
+        height: 60,
+        borderRadius: 10,
+    },
+    green: {
+        backgroundColor: '#aaffaa',
+    },
+    blue: {
+        backgroundColor: '#aaaaff',
+    },
+    red: {
+        backgroundColor: '#ffaaaa',
+    },
+    yellow: {
+        backgroundColor: '#ffffaa',
+    },
+    cyan: {
+        backgroundColor: '#aaffff',
+    },
+    magenta: {
+        backgroundColor: '#ffaaff',
+    },
+    dragging: {
+        opacity: 0.2,
+    },
+    hoverDragging: {
+        borderColor: 'magenta',
+        borderWidth: 2,
+    },
+    stagedCount: {
+        fontSize: 18,
+    },
+});
+function _CalendarBodyForMultiUser(_a) {
+    var containerHeight = _a.containerHeight, cellHeight = _a.cellHeight, dateRange = _a.dateRange, style = _a.style, onPressCell = _a.onPressCell, events = _a.events, onPressEvent = _a.onPressEvent, eventCellStyle = _a.eventCellStyle, calendarCellStyle = _a.calendarCellStyle, ampm = _a.ampm, showTime = _a.showTime, scrollOffsetMinutes = _a.scrollOffsetMinutes, onSwipeHorizontal = _a.onSwipeHorizontal, hideNowIndicator = _a.hideNowIndicator, overlapOffset = _a.overlapOffset, renderEvent = _a.renderEvent, _b = _a.headerComponent, headerComponent = _b === void 0 ? null : _b, _c = _a.headerComponentStyle, headerComponentStyle = _c === void 0 ? {} : _c, _d = _a.hourStyle, hourStyle = _d === void 0 ? {} : _d, _e = _a.showHourGuide, showHourGuide = _e === void 0 ? true : _e, _f = _a.hourRange, hourRange = _f === void 0 ? '0-23' : _f, multipleColumnData = _a.multipleColumnData, numberOfColumn = _a.numberOfColumn;
+    var scrollView = React.useRef(null);
+    var now = useNow(!hideNowIndicator).now;
+    React.useEffect(function () {
+        if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
+            // We add delay here to work correct on React Native
+            // see: https://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working
+            setTimeout(function () {
+                if (scrollView && scrollView.current) {
+                    scrollView.current.scrollTo({
+                        y: (cellHeight * scrollOffsetMinutes) / 60,
+                        animated: false,
+                    });
+                }
+            }, Platform.OS === 'web' ? 0 : 10);
+        }
+    }, [scrollView, scrollOffsetMinutes, cellHeight]);
+    var panResponder = usePanResponder({
+        onSwipeHorizontal: onSwipeHorizontal,
+    });
+    var _onPressCell = React.useCallback(function (date) {
+        onPressCell && onPressCell(date.toDate());
+    }, [onPressCell]);
+    var _renderMappedEvent = function (event) { return (React.createElement(CalendarEvent, { key: "".concat(event.start).concat(event.title).concat(event.end), event: event, onPressEvent: onPressEvent, eventCellStyle: eventCellStyle, showTime: showTime, eventCount: getCountOfEventsAtEvent(event, events), eventOrder: getOrderOfEvent(event, events), overlapOffset: overlapOffset, renderEvent: renderEvent, ampm: ampm })); };
+    var theme = useTheme();
+    var multipleData = [];
+    var defaultNoOfColumns = numberOfColumn || 3;
+    if (multipleColumnData && multipleColumnData.length > 0) {
+        if (multipleColumnData.length >= defaultNoOfColumns) {
+            for (var i = 0; i < multipleColumnData.length; i += defaultNoOfColumns) {
+                multipleData.push(multipleColumnData.slice(i, i + defaultNoOfColumns));
+            }
+        }
+        else {
+            multipleData.push(multipleColumnData);
+        }
+    }
+    return (React.createElement(React.Fragment, null,
+        headerComponent != null ? React.createElement(View, { style: headerComponentStyle }, headerComponent) : null,
+        React.createElement(ScrollView, __assign({ style: [
+                {
+                    height: containerHeight - cellHeight * 3,
+                    backgroundColor: theme.palette.backgroundColor,
+                    borderWidth: 1,
+                    borderColor: theme.palette.borderColor,
+                },
+                style,
+            ], ref: scrollView, scrollEventThrottle: 32 }, (Platform.OS !== 'web' ? panResponder.panHandlers : {}), { showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }, stickyHeaderIndices: [0] }),
+            React.createElement(View, __assign({ style: [
+                    u['flex-1'],
+                    theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
+                    multipleColumnData && multipleColumnData.length > 0
+                        ? { overflow: 'scroll', }
+                        : {},
+                ] }, (Platform.OS === 'web' ? panResponder.panHandlers : {})),
+                showHourGuide ? (React.createElement(View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                dateRange.map(function (date) { return (React.createElement(View, { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
+                    hoursRange(hourRange).map(function (hour, index) { return (React.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
+                    events
+                        .filter(function (_a) {
+                        var start = _a.start;
+                        return dayjs(start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
+                    })
+                        .map(_renderMappedEvent),
+                    events
+                        .filter(function (_a) {
+                        var start = _a.start, end = _a.end;
+                        return dayjs(start).isBefore(date.startOf('day')) &&
+                            dayjs(end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
+                    })
+                        .map(function (event) { return (__assign(__assign({}, event), { start: dayjs(event.end).startOf('day') })); })
+                        .map(_renderMappedEvent),
+                    events
+                        .filter(function (_a) {
+                        var start = _a.start, end = _a.end;
+                        return dayjs(start).isBefore(date.startOf('day')) &&
+                            dayjs(end).isAfter(date.endOf('day'));
+                    })
+                        .map(function (event) { return (__assign(__assign({}, event), { start: dayjs(event.end).startOf('day'), end: dayjs(event.end).endOf('day') })); })
+                        .map(_renderMappedEvent),
+                    isToday(date) && !hideNowIndicator && (React.createElement(View, { style: [
+                            styles.nowIndicator,
+                            { backgroundColor: theme.palette.nowIndicator },
+                            { top: "".concat(getRelativeTopInDay(now), "%") },
+                        ] })))); })))));
+}
+var CalendarBodyForMultiUser = typedMemo(_CalendarBodyForMultiUser);
 
 function _CalendarHeader(_a) {
     var dateRange = _a.dateRange, cellHeight = _a.cellHeight, style = _a.style, allDayEvents = _a.allDayEvents, onPressDateHeader = _a.onPressDateHeader, onPressEvent = _a.onPressEvent, activeDate = _a.activeDate, _b = _a.headerContentStyle, headerContentStyle = _b === void 0 ? {} : _b, _c = _a.dayHeaderStyle, dayHeaderStyle = _c === void 0 ? {} : _c, _d = _a.dayHeaderHighlightColor, dayHeaderHighlightColor = _d === void 0 ? '' : _d, _e = _a.weekDayHeaderHighlightColor, weekDayHeaderHighlightColor = _e === void 0 ? '' : _e, _f = _a.showAllDayEventCell, showAllDayEventCell = _f === void 0 ? true : _f;
@@ -1150,7 +1351,10 @@ function _CalendarContainer(_a) {
     var headerProps = __assign(__assign({}, commonProps), { style: headerContainerStyle, allDayEvents: allDayEvents, onPressDateHeader: onPressDateHeader, activeDate: activeDate, headerContentStyle: headerContentStyle, dayHeaderStyle: dayHeaderStyle, dayHeaderHighlightColor: dayHeaderHighlightColor, weekDayHeaderHighlightColor: weekDayHeaderHighlightColor, showAllDayEventCell: showAllDayEventCell, multipleColumnData: multipleColumnData });
     return (React__default.createElement(React__default.Fragment, null,
         !multipleColumnData && React__default.createElement(HeaderComponent, __assign({}, headerProps)),
-        React__default.createElement(CalendarBody, __assign({}, commonProps, { style: bodyContainerStyle, containerHeight: height, events: daytimeEvents, eventCellStyle: eventCellStyle, calendarCellStyle: calendarCellStyle, hideNowIndicator: hideNowIndicator, overlapOffset: overlapOffset, scrollOffsetMinutes: scrollOffsetMinutes, ampm: ampm, showTime: showTime, onPressCell: onPressCell, onPressEvent: onPressEvent, onSwipeHorizontal: onSwipeHorizontal, renderEvent: renderEvent, headerComponent: headerComponent, headerComponentStyle: headerComponentStyle, hourStyle: hourStyle, showHourGuide: showHourGuide, hourRange: hourRange, multipleColumnData: multipleColumnData, numberOfColumn: numberOfColumn }))));
+        mode === 'week' ?
+            React__default.createElement(CalendarBodyForMultiUser, __assign({}, commonProps, { style: bodyContainerStyle, containerHeight: height, events: daytimeEvents, eventCellStyle: eventCellStyle, calendarCellStyle: calendarCellStyle, hideNowIndicator: hideNowIndicator, overlapOffset: overlapOffset, scrollOffsetMinutes: scrollOffsetMinutes, ampm: ampm, showTime: showTime, onPressCell: onPressCell, onPressEvent: onPressEvent, onSwipeHorizontal: onSwipeHorizontal, renderEvent: renderEvent, headerComponent: headerComponent, headerComponentStyle: headerComponentStyle, hourStyle: hourStyle, showHourGuide: showHourGuide, hourRange: hourRange, multipleColumnData: multipleColumnData, numberOfColumn: numberOfColumn }))
+            :
+                React__default.createElement(CalendarBody, __assign({}, commonProps, { style: bodyContainerStyle, containerHeight: height, events: daytimeEvents, eventCellStyle: eventCellStyle, calendarCellStyle: calendarCellStyle, hideNowIndicator: hideNowIndicator, overlapOffset: overlapOffset, scrollOffsetMinutes: scrollOffsetMinutes, ampm: ampm, showTime: showTime, onPressCell: onPressCell, onPressEvent: onPressEvent, onSwipeHorizontal: onSwipeHorizontal, renderEvent: renderEvent, headerComponent: headerComponent, headerComponentStyle: headerComponentStyle, hourStyle: hourStyle, showHourGuide: showHourGuide, hourRange: hourRange, multipleColumnData: multipleColumnData, numberOfColumn: numberOfColumn }))));
 }
 var CalendarContainer = typedMemo(_CalendarContainer);
 
@@ -1166,5 +1370,5 @@ var Calendar = typedMemo(_Calendar);
 dayjs.extend(duration);
 dayjs.extend(isBetween);
 
-export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
+export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatEventData, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, prestoHourRange, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
 //# sourceMappingURL=index.es.js.map

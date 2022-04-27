@@ -158,9 +158,7 @@ function _CalendarBodyForMultiUser<T extends ICalendarEventBase>({
 }: CalendarBodyForMultiUserProps<T>) {
   const scrollView = React.useRef<ScrollView>(null)
   const { now } = useNow(!hideNowIndicator)
-  const [page, setPage] = React.useState(0);
-  const [received, setReceived] = React.useState([]);
-  const [staged, setStaged] = React.useState([]);
+
   React.useEffect(() => {
     if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
       // We add delay here to work correct on React Native
