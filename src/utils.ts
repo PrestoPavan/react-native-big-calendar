@@ -62,12 +62,59 @@ export const hours = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ]
 
+export function prestoHourRange(range: string, interval:number, currentDate:any = dayjs().startOf('d').toISOString() ){
+  var result:any = []
+  let rangeArray:any = range.split('-')
+  let diff = rangeArray[1] - rangeArray[0]
+  let timeIntervalInSeconds = 60000 * interval 
+  let startTime = dayjs(currentDate).hour(rangeArray[0]).startOf('h').valueOf()
+
+  for ( let i = 0 ; i < Number(diff * ( 60 / interval) ) ; i++){
+    let endTime =  startTime + timeIntervalInSeconds
+    if(i == 0 ){
+      result.push({
+        startTime: dayjs(startTime),
+        endTime: dayjs(endTime) 
+      })
+      startTime += timeIntervalInSeconds
+    } else {
+      result.push({
+        startTime: dayjs(startTime),
+        endTime: dayjs(endTime) 
+      })
+      startTime += timeIntervalInSeconds
+    }
+  }
+  
+  return result
+}
 export function hoursRange(range: string){
   let rangeArray = range.split('-')
   let result = []
   for ( let i = Number(rangeArray[0]) ; i <= Number(rangeArray[1]) ; i++){
     result.push(i) 
   }
+  return result
+}
+export function formatEventData( data:any, hoursRange:any){ 
+  
+  let result = hoursRange.map((timeObj:any) =>{
+    let values:any = []
+    data.map( ( item:any ) => {
+       if ( dayjs(item.startDate).isSame(timeObj.startTime) || 
+       ( dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime) ) || 
+       ( dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime) )
+      ){
+        values.push(item)
+       }     
+    })
+    return {
+      ...timeObj,
+      data:values
+    }
+    
+  })  
+  
   return result
 }
 
@@ -87,6 +134,7 @@ export function formatHour(hour: number, ampm = false) {
   }
   return `${hour}:00`
 }
+
 
 export function isToday(date: dayjs.Dayjs) {
   const today = dayjs()

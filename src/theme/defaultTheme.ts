@@ -18,7 +18,7 @@ export const defaultTheme: ThemeInterface = {
       100: '#f5f5f5',
       200: '#D1D1D1',
       300: '#e0e0e0',
-      // 400: '#bdbdbd',
+      400: '#CCCCCC',
       500: '#9e9e9e',
       // 600: '#757575',
       // 700: '#616161',

@@ -56,7 +56,48 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
     children: eventNotes,
   },
 ]
-
+export const eventData = [ 
+  {
+    startDate:dayjs().set('hour', 10).set('minute', 0).toISOString(),
+    endDate:dayjs().set('hour', 10).set('minute', 25).toISOString(),
+    name:'AB', 
+    id:'2022-04-26T09:02:02Z'
+  }, {
+    startDate:dayjs().set('hour', 10).set('minute', 34).toISOString(),
+    endDate:dayjs().set('hour', 10).set('minute',54).toISOString(),
+    name:'Az', 
+    id:'2022-0asd4-26T09:02:02Z'
+  }, {
+    startDate:dayjs().set('hour', 11).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour', 11).set('minute',54).toISOString(),
+    name:'Az', 
+    id:'2022-0asd4-26T09:02:02Z'
+  }, 
+  {
+    startDate:dayjs().set('hour', 12).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour',12).set('minute', 30).toISOString(),
+    name:'sd', 
+    id:'2022-04-2sdsd6T09:02:02Z'
+  }, 
+  {
+    startDate:dayjs().set('hour', 13).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour',13).set('minute', 30).toISOString(),
+    name:'cb', 
+    id:'2022-04-sdfs26T09:02:02Z'
+  }, 
+  {
+    startDate:dayjs().set('hour', 13).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour',13).set('minute', 30).toISOString(),
+    name:'ab', 
+    id:'2022-04-sdfs26T09:02:02Z'
+  }, 
+  {
+    startDate:dayjs().set('hour', 14).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour',15).set('minute', 30).toISOString(),
+    name:'asda', 
+    id:'2022-04-svdf:02:02Z'
+  }, 
+]
 export const multipleUserEvents = [
   {
     title: 'User 1',

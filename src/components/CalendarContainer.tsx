@@ -29,6 +29,7 @@ import {
 } from '../utils'
 import { CalendarBody } from './CalendarBody'
 import { CalendarBodyForMonthView } from './CalendarBodyForMonthView'
+import { CalendarBodyForMultiUser } from './CalendarBodyForMultiUser'
 import { CalendarHeader } from './CalendarHeader'
 import { CalendarHeaderForMonthView } from './CalendarHeaderForMonthView'
 
@@ -257,6 +258,7 @@ function _CalendarContainer<T extends ICalendarEventBase>({
     )
   }
 
+
   const headerProps = {
     ...commonProps,
     style: headerContainerStyle,
@@ -274,6 +276,32 @@ function _CalendarContainer<T extends ICalendarEventBase>({
   return (
     <React.Fragment>
       { !multipleColumnData && <HeaderComponent {...headerProps} /> }
+      { mode === 'week' ? 
+          <CalendarBodyForMultiUser 
+          {...commonProps}
+          style={bodyContainerStyle}
+          containerHeight={height}
+          events={daytimeEvents}
+          eventCellStyle={eventCellStyle}
+          calendarCellStyle={calendarCellStyle}
+          hideNowIndicator={hideNowIndicator}
+          overlapOffset={overlapOffset}
+          scrollOffsetMinutes={scrollOffsetMinutes}
+          ampm={ampm}
+          showTime={showTime}
+          onPressCell={onPressCell}
+          onPressEvent={onPressEvent}
+          onSwipeHorizontal={onSwipeHorizontal}
+          renderEvent={renderEvent}
+          headerComponent={headerComponent}
+          headerComponentStyle={headerComponentStyle}
+          hourStyle={hourStyle}
+          showHourGuide={showHourGuide}
+          hourRange={hourRange}
+          multipleColumnData={multipleColumnData}
+          numberOfColumn={numberOfColumn}
+        />
+      : 
       <CalendarBody
         {...commonProps}
         style={bodyContainerStyle}
@@ -297,7 +325,7 @@ function _CalendarContainer<T extends ICalendarEventBase>({
         hourRange={hourRange}
         multipleColumnData={multipleColumnData}
         numberOfColumn={numberOfColumn}
-      />
+      />}
     </React.Fragment>
   )
 }

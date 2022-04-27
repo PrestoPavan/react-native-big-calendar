@@ -7,10 +7,11 @@ import { Alert, Dimensions, View } from 'react-native'
 
 import { Calendar } from '../src'
 import { CONTROL_HEIGHT, Control } from './components/Control'
-import { customEventRenderer, events, multipleUserEvents, spanningEvents } from './events'
+import { customEventRenderer, events, multipleUserEvents, spanningEvents, eventData } from './events'
 import { useEvents } from './hooks'
 import { styles } from './styles'
 import { themes } from './themes'
+import PrestoCalendar from '../src/components/PrestoCalendar'
 
 function alert(input: any) {
   // @ts-ignore
@@ -24,6 +25,14 @@ function alert(input: any) {
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
 storiesOf('showcase Desktop', module)
+.add('Presto calendar', () => (
+  <View style={styles.desktop}>
+    <PrestoCalendar
+      hourRange={'10-18'}
+      eventData={eventData}
+    />
+  </View>
+))
   .add('day mode', () => (
     <View style={styles.desktop}>
       <Calendar
