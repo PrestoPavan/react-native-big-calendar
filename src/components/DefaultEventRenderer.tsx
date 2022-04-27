@@ -10,7 +10,6 @@ function getRandomColor(){
 export function DefaultEventRenderer({
   touchableOpacityProps,
   event,
-  textColor,
   cellHeight
 }: any) {
   const theme = useTheme()

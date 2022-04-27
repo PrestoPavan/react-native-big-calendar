@@ -723,14 +723,14 @@ var HourGuideCell = function (_a) {
             React__namespace.createElement(reactNative.View, { style: { height: cellHeight / 4, width: '100%', } }))));
 };
 
-var _HourGuideColumn = function (_a) {
+var _HourGuideColumn$1 = function (_a) {
     var cellHeight = _a.cellHeight, hour = _a.hour, ampm = _a.ampm, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
     var theme = useTheme();
     var textStyle = React__namespace.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
     return (React__namespace.createElement(reactNative.View, { style: { height: cellHeight, backgroundColor: theme.palette.cellBg, width: 70, borderTopWidth: 1, borderColor: theme.palette.gray[200] } },
         React__namespace.createElement(reactNative.Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, formatHour(hour, ampm))));
 };
-var HourGuideColumn = React__namespace.memo(_HourGuideColumn, function () { return true; });
+var HourGuideColumn$1 = React__namespace.memo(_HourGuideColumn$1, function () { return true; });
 
 var styles$1 = reactNative.StyleSheet.create({
     nowIndicator: {
@@ -821,7 +821,7 @@ function _CalendarBody(_a) {
                         ? { overflow: 'scroll', }
                         : {},
                 ] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
-                showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn$1, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
                 multipleColumnData && multipleColumnData.length > 0
                     ? multipleData[page].map(function (column) {
                         return dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [
@@ -1170,7 +1170,7 @@ function _CalendarBodyForMultiUser(_a) {
                         ? { overflow: 'scroll', }
                         : {},
                 ] }, (reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {})),
-                showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                showHourGuide ? (React__namespace.createElement(reactNative.View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React__namespace.createElement(HourGuideColumn$1, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
                 dateRange.map(function (date) { return (React__namespace.createElement(reactNative.View, { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
                     hoursRange(hourRange).map(function (hour, index) { return (React__namespace.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
                     events
@@ -1399,6 +1399,59 @@ function _Calendar(_a) {
 }
 var Calendar = typedMemo(_Calendar);
 
+function getRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+}
+function DefaultEventRenderer(_a) {
+    var touchableOpacityProps = _a.touchableOpacityProps, event = _a.event, cellHeight = _a.cellHeight;
+    var theme = useTheme();
+    return (React__namespace.createElement(reactNative.TouchableOpacity, __assign({}, touchableOpacityProps),
+        React__namespace.createElement(reactNative.View, { style: { height: cellHeight, backgroundColor: theme.palette.cellBg, borderTopWidth: 1, borderColor: theme.palette.gray[200],
+                flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 5 } }, event.data && event.data.length > 0 ?
+            event.data.map(function (event, index) {
+                var name = event.name && event.name.length > 2 ? event.name.substring(0, 1) : event.name;
+                if (name) {
+                    return React__namespace.createElement(reactNative.View, { key: index, style: { marginRight: 5, backgroundColor: getRandomColor(), width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' } },
+                        React__namespace.createElement(reactNative.Text, { style: { textTransform: 'uppercase', color: theme.palette.primary.contrastText } }, name));
+                }
+                else {
+                    return null;
+                }
+            })
+            : null)));
+}
+
+var _HourGuideColumn = function (_a) {
+    var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
+    var theme = useTheme();
+    var textStyle = React__namespace.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
+    return (React__namespace.createElement(reactNative.View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200] } },
+        React__namespace.createElement(reactNative.Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, hour)));
+};
+var HourGuideColumn = React__namespace.memo(_HourGuideColumn, function () { return true; });
+
+function PrestoCalendar(_a) {
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs__default['default']().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e;
+    var theme = useTheme();
+    var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
+    var data = formatEventData(eventData, hoursRangeArr);
+    console.log('data', data);
+    return (React__default['default'].createElement(React__default['default'].Fragment, null,
+        headerComponent != null ? React__default['default'].createElement(reactNative.View, { style: headerComponentStyle }, headerComponent) : null,
+        React__default['default'].createElement(reactNative.ScrollView, { style: {} },
+            React__default['default'].createElement(reactNative.View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
+                React__default['default'].createElement(reactNative.View, { style: { width: 70, backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default['default'].createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs__default['default'](item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle })); })),
+                React__default['default'].createElement(reactNative.View, { style: { flex: 1 } }, data.map(function (event, index) {
+                    return React__default['default'].createElement(reactNative.View, { key: index, style: { flex: 1 } }, renderCell ? function () { return renderCell(event); } :
+                        React__default['default'].createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));
+                }))))));
+}
+
+var PrestoCalendar$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': PrestoCalendar
+});
+
 dayjs__default['default'].extend(duration__default['default']);
 dayjs__default['default'].extend(isBetween__default['default']);
 
@@ -1415,6 +1468,7 @@ exports.HOUR_GUIDE_WIDTH = HOUR_GUIDE_WIDTH;
 exports.MIN_HEIGHT = MIN_HEIGHT;
 exports.OVERLAP_OFFSET = OVERLAP_OFFSET;
 exports.OVERLAP_PADDING = OVERLAP_PADDING;
+exports.PrestoCalendar = PrestoCalendar$1;
 exports.ThemeContext = ThemeContext;
 exports['default'] = Calendar;
 exports.defaultTheme = defaultTheme;

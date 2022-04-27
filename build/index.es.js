@@ -691,14 +691,14 @@ var HourGuideCell = function (_a) {
             React.createElement(View, { style: { height: cellHeight / 4, width: '100%', } }))));
 };
 
-var _HourGuideColumn = function (_a) {
+var _HourGuideColumn$1 = function (_a) {
     var cellHeight = _a.cellHeight, hour = _a.hour, ampm = _a.ampm, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
     var theme = useTheme();
     var textStyle = React.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
     return (React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.cellBg, width: 70, borderTopWidth: 1, borderColor: theme.palette.gray[200] } },
         React.createElement(Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, formatHour(hour, ampm))));
 };
-var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
+var HourGuideColumn$1 = React.memo(_HourGuideColumn$1, function () { return true; });
 
 var styles$1 = StyleSheet.create({
     nowIndicator: {
@@ -789,7 +789,7 @@ function _CalendarBody(_a) {
                         ? { overflow: 'scroll', }
                         : {},
                 ] }, (Platform.OS === 'web' ? panResponder.panHandlers : {})),
-                showHourGuide ? (React.createElement(View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                showHourGuide ? (React.createElement(View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React.createElement(HourGuideColumn$1, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
                 multipleColumnData && multipleColumnData.length > 0
                     ? multipleData[page].map(function (column) {
                         return dateRange.map(function (date) { return (React.createElement(View, { style: [
@@ -1138,7 +1138,7 @@ function _CalendarBodyForMultiUser(_a) {
                         ? { overflow: 'scroll', }
                         : {},
                 ] }, (Platform.OS === 'web' ? panResponder.panHandlers : {})),
-                showHourGuide ? (React.createElement(View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React.createElement(HourGuideColumn, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
+                showHourGuide ? (React.createElement(View, { style: [u['z-20'], u['w-70'], { marginTop: -1 }] }, hoursRange(hourRange).map(function (hour) { return (React.createElement(HourGuideColumn$1, { key: hour, cellHeight: cellHeight, hour: hour, ampm: ampm, hourStyle: hourStyle })); }))) : null,
                 dateRange.map(function (date) { return (React.createElement(View, { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
                     hoursRange(hourRange).map(function (hour, index) { return (React.createElement(HourGuideCell, { key: hour, cellHeight: cellHeight, date: date, hour: hour, onPress: _onPressCell, index: index, calendarCellStyle: calendarCellStyle })); }),
                     events
@@ -1367,8 +1367,61 @@ function _Calendar(_a) {
 }
 var Calendar = typedMemo(_Calendar);
 
+function getRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+}
+function DefaultEventRenderer(_a) {
+    var touchableOpacityProps = _a.touchableOpacityProps, event = _a.event, cellHeight = _a.cellHeight;
+    var theme = useTheme();
+    return (React.createElement(TouchableOpacity, __assign({}, touchableOpacityProps),
+        React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.cellBg, borderTopWidth: 1, borderColor: theme.palette.gray[200],
+                flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 5 } }, event.data && event.data.length > 0 ?
+            event.data.map(function (event, index) {
+                var name = event.name && event.name.length > 2 ? event.name.substring(0, 1) : event.name;
+                if (name) {
+                    return React.createElement(View, { key: index, style: { marginRight: 5, backgroundColor: getRandomColor(), width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' } },
+                        React.createElement(Text, { style: { textTransform: 'uppercase', color: theme.palette.primary.contrastText } }, name));
+                }
+                else {
+                    return null;
+                }
+            })
+            : null)));
+}
+
+var _HourGuideColumn = function (_a) {
+    var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
+    var theme = useTheme();
+    var textStyle = React.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
+    return (React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200] } },
+        React.createElement(Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, hour)));
+};
+var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
+
+function PrestoCalendar(_a) {
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e;
+    var theme = useTheme();
+    var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
+    var data = formatEventData(eventData, hoursRangeArr);
+    console.log('data', data);
+    return (React__default.createElement(React__default.Fragment, null,
+        headerComponent != null ? React__default.createElement(View, { style: headerComponentStyle }, headerComponent) : null,
+        React__default.createElement(ScrollView, { style: {} },
+            React__default.createElement(View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
+                React__default.createElement(View, { style: { width: 70, backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default.createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs(item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle })); })),
+                React__default.createElement(View, { style: { flex: 1 } }, data.map(function (event, index) {
+                    return React__default.createElement(View, { key: index, style: { flex: 1 } }, renderCell ? function () { return renderCell(event); } :
+                        React__default.createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));
+                }))))));
+}
+
+var PrestoCalendar$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    'default': PrestoCalendar
+});
+
 dayjs.extend(duration);
 dayjs.extend(isBetween);
 
-export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatEventData, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, prestoHourRange, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
+export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, PrestoCalendar$1 as PrestoCalendar, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatEventData, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, prestoHourRange, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
 //# sourceMappingURL=index.es.js.map

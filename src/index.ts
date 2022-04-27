@@ -22,7 +22,7 @@ export * from './theme/ThemeContext'
 export * from './theme/ThemeInterface'
 export * from './theme/defaultTheme'
 export * from './utils'
-
+export * as PrestoCalendar from './components/PrestoCalendar'
 export * from './interfaces'
 
 /* eslint-disable */
