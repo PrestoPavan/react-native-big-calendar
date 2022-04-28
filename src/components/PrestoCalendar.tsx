@@ -45,7 +45,7 @@ export default function PrestoCalendar({
             <View style={{flex:1}}>
               {data.map( (event:any, index:any ) => {
                 return <View key={index} style={{ flex:1}}>
-                  {renderCell ? ()=>renderCell(event) :
+                  {renderCell ? renderCell(event) :
                     <DefaultEventRenderer event={event} cellHeight={cellHeight}  />
                   }
                 </View>

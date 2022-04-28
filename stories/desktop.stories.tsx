@@ -30,6 +30,7 @@ storiesOf('showcase Desktop', module)
     <PrestoCalendar
       hourRange={'10-18'}
       eventData={eventData}
+      
     />
   </View>
 ))

@@ -1410,7 +1410,7 @@ function PrestoCalendar(_a) {
             React__default.createElement(View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
                 React__default.createElement(View, { style: { width: 70, backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default.createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs(item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle })); })),
                 React__default.createElement(View, { style: { flex: 1 } }, data.map(function (event, index) {
-                    return React__default.createElement(View, { key: index, style: { flex: 1 } }, renderCell ? function () { return renderCell(event); } :
+                    return React__default.createElement(View, { key: index, style: { flex: 1 } }, renderCell ? renderCell(event) :
                         React__default.createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));
                 }))))));
 }
