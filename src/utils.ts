@@ -96,8 +96,8 @@ export function hoursRange(range: string){
   }
   return result
 }
+
 export function formatEventData( data:any, hoursRange:any){ 
-  
   let result = hoursRange.map((timeObj:any) =>{
     let values:any = []
     data.map( ( item:any ) => {
@@ -112,9 +112,7 @@ export function formatEventData( data:any, hoursRange:any){
       ...timeObj,
       data:values
     }
-    
   })  
-  
   return result
 }
 

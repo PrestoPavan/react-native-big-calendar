@@ -1,4 +1,5 @@
 import { Calendar } from './components/Calendar';
+import PC from './components/PrestoCalendar';
 export * from './components/Calendar';
 export * from './components/CalendarBody';
 export * from './components/CalendarBodyForMonthView';
@@ -13,6 +14,6 @@ export * from './theme/ThemeContext';
 export * from './theme/ThemeInterface';
 export * from './theme/defaultTheme';
 export * from './utils';
-export * as PrestoCalendar from './components/PrestoCalendar';
 export * from './interfaces';
 export default Calendar;
+export declare const PrestoCalendar: typeof PC;

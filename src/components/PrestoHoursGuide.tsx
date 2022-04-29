@@ -20,7 +20,7 @@ const _HourGuideColumn = ({ cellHeight, hour, hourStyle = {} }: HourGuideColumnP
   )
 
   return (
-    <View style={{ height: cellHeight, backgroundColor:theme.palette.gray[400], width:70, borderTopWidth:1, borderRightWidth:1, borderColor:theme.palette.gray[200] }}>
+    <View style={{ height: cellHeight, backgroundColor:theme.palette.gray[400], width:70, borderTopWidth:1, borderRightWidth:1, borderColor:theme.palette.gray[200], justifyContent:'center' }}>
       <Text style={[objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']]}>
         {hour}
       </Text>

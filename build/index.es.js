@@ -1393,12 +1393,12 @@ var _HourGuideColumn = function (_a) {
     var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
     var theme = useTheme();
     var textStyle = React.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
-    return (React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200] } },
+    return (React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200], justifyContent: 'center' } },
         React.createElement(Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, hour)));
 };
 var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
 
-function PrestoCalendar(_a) {
+function PrestoCalendar$1(_a) {
     var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
@@ -1415,13 +1415,9 @@ function PrestoCalendar(_a) {
                 }))))));
 }
 
-var PrestoCalendar$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    'default': PrestoCalendar
-});
-
 dayjs.extend(duration);
 dayjs.extend(isBetween);
+var PrestoCalendar = PrestoCalendar$1;
 
-export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, PrestoCalendar$1 as PrestoCalendar, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatEventData, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, prestoHourRange, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
+export { Calendar, CalendarBody, CalendarBodyForMonthView, CalendarEvent, CalendarEventForMonthView, CalendarHeader, CalendarHeaderForMonthView, DAY_MINUTES, DefaultCalendarEventRenderer, HOUR_GUIDE_WIDTH, MIN_HEIGHT, OVERLAP_OFFSET, OVERLAP_PADDING, PrestoCalendar, ThemeContext, Calendar as default, defaultTheme, eventCellCss, formatEventData, formatHour, formatStartEnd, getCountOfEventsAtEvent, getDatesInMonth, getDatesInNextCustomDays, getDatesInNextOneDay, getDatesInNextThreeDays, getDatesInWeek, getEventSpanningInfo, getOrderOfEvent, getRelativeTopInDay, getStyleForOverlappingEvent, getWeeksWithAdjacentMonths, hours, hoursRange, isAllDayEvent, isToday, modeToNum, objHasContent, prestoHourRange, stringHasContent, todayInMinutes, typedMemo, u, useTheme };
 //# sourceMappingURL=index.es.js.map

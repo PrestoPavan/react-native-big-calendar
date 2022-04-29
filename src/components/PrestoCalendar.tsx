@@ -32,15 +32,15 @@ export default function PrestoCalendar({
         <ScrollView style={{}}>
           <View style={{flex:1, flexDirection:"row", backgroundColor:theme.palette.cellBackgroundColor, borderBottomWidth:1, borderColor:theme.palette.gray[200]}}>
             <View style={{ width:70, backgroundColor:theme.palette.cellBg, borderRightWidth:1, borderColor:theme.palette.gray[200] }}>
-              {hoursRangeArr.map((item:any) => (
+              { hoursRangeArr.map((item:any) => (
                 <HourGuideColumn
                   key={item.startTime}
                   cellHeight={cellHeight}
-                  hour={ dayjs(item.startTime).format('hh:mm A')}
+                  hour={dayjs(item.startTime).format('hh:mm A')}
                   ampm={true}
                   hourStyle={hourStyle}
                 />
-                )) }
+                ))}
             </View>
             <View style={{flex:1}}>
               {data.map( (event:any, index:any ) => {
@@ -52,7 +52,6 @@ export default function PrestoCalendar({
               })}
             </View>
           </View>
-            
         </ScrollView>
       </React.Fragment>
   )

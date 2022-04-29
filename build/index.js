@@ -1425,12 +1425,12 @@ var _HourGuideColumn = function (_a) {
     var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
     var theme = useTheme();
     var textStyle = React__namespace.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
-    return (React__namespace.createElement(reactNative.View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200] } },
+    return (React__namespace.createElement(reactNative.View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200], justifyContent: 'center' } },
         React__namespace.createElement(reactNative.Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, hour)));
 };
 var HourGuideColumn = React__namespace.memo(_HourGuideColumn, function () { return true; });
 
-function PrestoCalendar(_a) {
+function PrestoCalendar$1(_a) {
     var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs__default['default']().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
@@ -1447,13 +1447,9 @@ function PrestoCalendar(_a) {
                 }))))));
 }
 
-var PrestoCalendar$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    'default': PrestoCalendar
-});
-
 dayjs__default['default'].extend(duration__default['default']);
 dayjs__default['default'].extend(isBetween__default['default']);
+var PrestoCalendar = PrestoCalendar$1;
 
 exports.Calendar = Calendar;
 exports.CalendarBody = CalendarBody;
@@ -1468,7 +1464,7 @@ exports.HOUR_GUIDE_WIDTH = HOUR_GUIDE_WIDTH;
 exports.MIN_HEIGHT = MIN_HEIGHT;
 exports.OVERLAP_OFFSET = OVERLAP_OFFSET;
 exports.OVERLAP_PADDING = OVERLAP_PADDING;
-exports.PrestoCalendar = PrestoCalendar$1;
+exports.PrestoCalendar = PrestoCalendar;
 exports.ThemeContext = ThemeContext;
 exports['default'] = Calendar;
 exports.defaultTheme = defaultTheme;
