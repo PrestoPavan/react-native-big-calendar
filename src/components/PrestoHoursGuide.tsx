@@ -10,9 +10,10 @@ interface HourGuideColumnProps {
   hour: string
   ampm: boolean
   hourStyle: TextStyle
+  hourContainerStyle:TextStyle
 }
 
-const _HourGuideColumn = ({ cellHeight, hour, hourStyle = {} }: HourGuideColumnProps) => {
+const _HourGuideColumn = ({ cellHeight, hour, hourStyle = {}, hourContainerStyle={} }: HourGuideColumnProps) => {
   const theme = useTheme()
   const textStyle = React.useMemo(
     () => ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }),
@@ -20,7 +21,7 @@ const _HourGuideColumn = ({ cellHeight, hour, hourStyle = {} }: HourGuideColumnP
   )
 
   return (
-    <View style={{ height: cellHeight, backgroundColor:theme.palette.gray[400], width:70, borderTopWidth:1, borderRightWidth:1, borderColor:theme.palette.gray[200], justifyContent:'center' }}>
+    <View style={[{ height: cellHeight, backgroundColor:theme.palette.gray[400], width:100, borderTopWidth:1, borderRightWidth:1, borderColor:theme.palette.gray[200], justifyContent:'center' }, objHasContent(hourContainerStyle) ? hourContainerStyle : {}]}>
       <Text style={[objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']]}>
         {hour}
       </Text>

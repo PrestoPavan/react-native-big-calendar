@@ -18,7 +18,9 @@ export default function PrestoCalendar({
   eventData ,
   currentDate = dayjs().startOf('d').toISOString(),
   renderCell = null,
-  cellHeight = 90
+  cellHeight = 90,
+  hourContainerStyle,
+  calendarStyle
 }:any) {
   const theme = useTheme()
   const hoursRangeArr = prestoHourRange(hourRange, interval, currentDate)
@@ -29,9 +31,9 @@ export default function PrestoCalendar({
   return (
       <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
-        <ScrollView style={{}}>
+        <ScrollView contentContainerStyle={{...calendarStyle}}>
           <View style={{flex:1, flexDirection:"row", backgroundColor:theme.palette.cellBackgroundColor, borderBottomWidth:1, borderColor:theme.palette.gray[200]}}>
-            <View style={{ width:70, backgroundColor:theme.palette.cellBg, borderRightWidth:1, borderColor:theme.palette.gray[200] }}>
+            <View style={{  backgroundColor:theme.palette.cellBg, borderRightWidth:1, borderColor:theme.palette.gray[200] }}>
               { hoursRangeArr.map((item:any) => (
                 <HourGuideColumn
                   key={item.startTime}
@@ -39,6 +41,7 @@ export default function PrestoCalendar({
                   hour={dayjs(item.startTime).format('hh:mm A')}
                   ampm={true}
                   hourStyle={hourStyle}
+                  hourContainerStyle={hourContainerStyle}
                 />
                 ))}
             </View>

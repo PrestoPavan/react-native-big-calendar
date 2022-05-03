@@ -1390,25 +1390,25 @@ function DefaultEventRenderer(_a) {
 }
 
 var _HourGuideColumn = function (_a) {
-    var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b;
+    var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b, _c = _a.hourContainerStyle, hourContainerStyle = _c === void 0 ? {} : _c;
     var theme = useTheme();
     var textStyle = React.useMemo(function () { return ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }); }, [theme]);
-    return (React.createElement(View, { style: { height: cellHeight, backgroundColor: theme.palette.gray[400], width: 70, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200], justifyContent: 'center' } },
+    return (React.createElement(View, { style: [{ height: cellHeight, backgroundColor: theme.palette.gray[400], width: 100, borderTopWidth: 1, borderRightWidth: 1, borderColor: theme.palette.gray[200], justifyContent: 'center' }, objHasContent(hourContainerStyle) ? hourContainerStyle : {}] },
         React.createElement(Text, { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] }, hour)));
 };
 var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
 
 function PrestoCalendar$1(_a) {
-    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e;
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
     var data = formatEventData(eventData, hoursRangeArr);
     console.log('data', data);
     return (React__default.createElement(React__default.Fragment, null,
         headerComponent != null ? React__default.createElement(View, { style: headerComponentStyle }, headerComponent) : null,
-        React__default.createElement(ScrollView, { style: {} },
+        React__default.createElement(ScrollView, { contentContainerStyle: __assign({}, calendarStyle) },
             React__default.createElement(View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
-                React__default.createElement(View, { style: { width: 70, backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default.createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs(item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle })); })),
+                React__default.createElement(View, { style: { backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default.createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs(item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle, hourContainerStyle: hourContainerStyle })); })),
                 React__default.createElement(View, { style: { flex: 1 } }, data.map(function (event, index) {
                     return React__default.createElement(View, { key: index, style: { flex: 1 } }, renderCell ? renderCell(event) :
                         React__default.createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));

@@ -1,1 +1,1 @@
-export default function PrestoCalendar({ headerComponent, hourRange, headerComponentStyle, hourStyle, interval, eventData, currentDate, renderCell, cellHeight }: any): JSX.Element;
+export default function PrestoCalendar({ headerComponent, hourRange, headerComponentStyle, hourStyle, interval, eventData, currentDate, renderCell, cellHeight, hourContainerStyle, calendarStyle }: any): JSX.Element;

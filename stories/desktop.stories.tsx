@@ -30,7 +30,8 @@ storiesOf('showcase Desktop', module)
     <PrestoCalendar
       hourRange={'10-18'}
       eventData={eventData}
-      hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14, borderWidtth:1, borderColor:'#000000'}}
+      hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
+      hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
     />
   </View>
 ))

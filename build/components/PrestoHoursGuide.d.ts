@@ -5,6 +5,7 @@ interface HourGuideColumnProps {
     hour: string;
     ampm: boolean;
     hourStyle: TextStyle;
+    hourContainerStyle: TextStyle;
 }
-export declare const HourGuideColumn: React.MemoExoticComponent<({ cellHeight, hour, hourStyle }: HourGuideColumnProps) => JSX.Element>;
+export declare const HourGuideColumn: React.MemoExoticComponent<({ cellHeight, hour, hourStyle, hourContainerStyle }: HourGuideColumnProps) => JSX.Element>;
 export {};
