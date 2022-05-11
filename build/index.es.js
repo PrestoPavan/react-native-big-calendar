@@ -362,8 +362,6 @@ function formatEventData(data, hoursRange) {
     var result = hoursRange.map(function (timeObj) {
         var values = [];
         data.map(function (item) {
-            console.log('timeObj-', timeObj);
-            console.log('item-', item);
             if (dayjs(item.startDate).isSame(timeObj.startTime) ||
                 (dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime)) ||
                 (dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime)) ||
@@ -1402,7 +1400,7 @@ var _HourGuideColumn = function (_a) {
 var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
 
 function PrestoCalendar$1(_a) {
-    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle, scrollOffsetMinutes = _a.scrollOffsetMinutes, style = _a.style, containerHeight = _a.containerHeight;
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle, scrollOffsetMinutes = _a.scrollOffsetMinutes, style = _a.style, _f = _a.containerHeight, containerHeight = _f === void 0 ? 700 : _f;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
     var scrollView = React__default.useRef(null);

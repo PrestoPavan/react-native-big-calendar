@@ -23,7 +23,7 @@ export default function PrestoCalendar({
   calendarStyle,
   scrollOffsetMinutes,
   style,
-  containerHeight
+  containerHeight = 700
 }:any) {
   const theme = useTheme()
   const hoursRangeArr = prestoHourRange(hourRange, interval, currentDate)
@@ -64,7 +64,6 @@ export default function PrestoCalendar({
           ref={scrollView}
           scrollEventThrottle={32}
           showsVerticalScrollIndicator={false}
-          
           nestedScrollEnabled
           contentOffset={Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }}
         >

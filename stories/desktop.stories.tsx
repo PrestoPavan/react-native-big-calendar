@@ -32,8 +32,8 @@ storiesOf('showcase Desktop', module)
       eventData={eventData}
       hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
       hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
-      style={{height:SCREEN_HEIGHT}}
-      scrollOffsetMinutes={100}
+      style={{ height:SCREEN_HEIGHT }}
+      scrollOffsetMinutes={500}
     />
   </View>
 ))
