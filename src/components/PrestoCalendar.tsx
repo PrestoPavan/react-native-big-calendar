@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React from 'react'
-import { View,ScrollView } from 'react-native'
+import { View,ScrollView, Platform } from 'react-native'
 import { prestoHourRange } from '../utils';
 import {
   formatEventData
@@ -20,10 +20,33 @@ export default function PrestoCalendar({
   renderCell = null,
   cellHeight = 90,
   hourContainerStyle,
-  calendarStyle
+  calendarStyle,
+  scrollOffsetMinutes,
+  style,
+  containerHeight
 }:any) {
   const theme = useTheme()
   const hoursRangeArr = prestoHourRange(hourRange, interval, currentDate)
+  const scrollView = React.useRef<ScrollView>(null)
+
+  React.useEffect(() => {
+    if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
+      // We add delay here to work correct on React Native      
+      // see: https://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working
+      setTimeout(
+        () => {
+          if (scrollView && scrollView.current) {
+            scrollView.current.scrollTo({
+              y: (cellHeight * scrollOffsetMinutes) / 60,
+              animated: false,
+            })
+          }
+        },
+        Platform.OS === 'web' ? 0 : 10,
+      )
+    }
+  }, [scrollView, scrollOffsetMinutes, cellHeight])
+
 
   const data = formatEventData(eventData, hoursRangeArr )
   console.log('data', data);
@@ -31,7 +54,20 @@ export default function PrestoCalendar({
   return (
       <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
-        <ScrollView contentContainerStyle={{...calendarStyle}}>
+        <ScrollView 
+          contentContainerStyle={{...calendarStyle}} 
+          style={[
+            {
+              height: containerHeight - cellHeight * 3,
+            }, style
+          ]}
+          ref={scrollView}
+          scrollEventThrottle={32}
+          showsVerticalScrollIndicator={false}
+          
+          nestedScrollEnabled
+          contentOffset={Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 }}
+        >
           <View style={{flex:1, flexDirection:"row", backgroundColor:theme.palette.cellBackgroundColor, borderBottomWidth:1, borderColor:theme.palette.gray[200]}}>
             <View style={{  backgroundColor:theme.palette.cellBg, borderRightWidth:1, borderColor:theme.palette.gray[200] }}>
               { hoursRangeArr.map((item:any) => (

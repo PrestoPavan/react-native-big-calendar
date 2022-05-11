@@ -362,9 +362,12 @@ function formatEventData(data, hoursRange) {
     var result = hoursRange.map(function (timeObj) {
         var values = [];
         data.map(function (item) {
+            console.log('timeObj-', timeObj);
+            console.log('item-', item);
             if (dayjs(item.startDate).isSame(timeObj.startTime) ||
                 (dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime)) ||
-                (dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime))) {
+                (dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime)) ||
+                (dayjs(timeObj.startTime).isBetween(item.startDate, item.endDate))) {
                 values.push(item);
             }
         });
@@ -1399,14 +1402,33 @@ var _HourGuideColumn = function (_a) {
 var HourGuideColumn = React.memo(_HourGuideColumn, function () { return true; });
 
 function PrestoCalendar$1(_a) {
-    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle;
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle, scrollOffsetMinutes = _a.scrollOffsetMinutes, style = _a.style, containerHeight = _a.containerHeight;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
+    var scrollView = React__default.useRef(null);
+    React__default.useEffect(function () {
+        if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
+            // We add delay here to work correct on React Native      
+            // see: https://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working
+            setTimeout(function () {
+                if (scrollView && scrollView.current) {
+                    scrollView.current.scrollTo({
+                        y: (cellHeight * scrollOffsetMinutes) / 60,
+                        animated: false,
+                    });
+                }
+            }, Platform.OS === 'web' ? 0 : 10);
+        }
+    }, [scrollView, scrollOffsetMinutes, cellHeight]);
     var data = formatEventData(eventData, hoursRangeArr);
     console.log('data', data);
     return (React__default.createElement(React__default.Fragment, null,
         headerComponent != null ? React__default.createElement(View, { style: headerComponentStyle }, headerComponent) : null,
-        React__default.createElement(ScrollView, { contentContainerStyle: __assign({}, calendarStyle) },
+        React__default.createElement(ScrollView, { contentContainerStyle: __assign({}, calendarStyle), style: [
+                {
+                    height: containerHeight - cellHeight * 3,
+                }, style
+            ], ref: scrollView, scrollEventThrottle: 32, showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 } },
             React__default.createElement(View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
                 React__default.createElement(View, { style: { backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default.createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs(item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle, hourContainerStyle: hourContainerStyle })); })),
                 React__default.createElement(View, { style: { flex: 1 } }, data.map(function (event, index) {

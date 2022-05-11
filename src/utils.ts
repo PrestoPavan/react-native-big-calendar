@@ -103,7 +103,8 @@ export function formatEventData( data:any, hoursRange:any){
     data.map( ( item:any ) => {
        if ( dayjs(item.startDate).isSame(timeObj.startTime) || 
        ( dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime) ) || 
-       ( dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime) )
+       ( dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime) ) ||
+      (dayjs(timeObj.startTime).isBetween(item.startDate, item.endDate ) )
       ){
         values.push(item)
        }     

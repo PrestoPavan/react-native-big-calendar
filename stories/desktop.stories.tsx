@@ -28,10 +28,12 @@ storiesOf('showcase Desktop', module)
 .add('Presto calendar', () => (
   <View style={styles.desktop}>
     <PrestoCalendar
-      hourRange={'10-18'}
+      hourRange={'0-24'}
       eventData={eventData}
       hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
       hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
+      style={{height:SCREEN_HEIGHT}}
+      scrollOffsetMinutes={100}
     />
   </View>
 ))

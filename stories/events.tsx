@@ -59,13 +59,13 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
 export const eventData = [ 
   {
     startDate:dayjs().set('hour', 10).set('minute', 0).toISOString(),
-    endDate:dayjs().set('hour', 10).set('minute', 25).toISOString(),
+    endDate:dayjs().set('hour', 10).set('minute', 59).toISOString(),
     name:'AB', 
     id:'2022-04-26T09:02:02Z'
   }, {
-    startDate:dayjs().set('hour', 10).set('minute', 34).toISOString(),
-    endDate:dayjs().set('hour', 10).set('minute',54).toISOString(),
-    name:'Az', 
+    startDate:dayjs().set('hour', 10).set('minute', 0).toISOString(),
+    endDate:dayjs().set('hour', 10).set('minute',29).toISOString(),
+    name:'we', 
     id:'2022-0asd4-26T09:02:02Z'
   }, {
     startDate:dayjs().set('hour', 11).set('minute', 10).toISOString(),
@@ -86,9 +86,9 @@ export const eventData = [
     id:'2022-04-sdfs26T09:02:02Z'
   }, 
   {
-    startDate:dayjs().set('hour', 13).set('minute', 10).toISOString(),
-    endDate:dayjs().set('hour',13).set('minute', 30).toISOString(),
-    name:'ab', 
+    startDate:dayjs().set('hour', 19).set('minute', 10).toISOString(),
+    endDate:dayjs().set('hour',20).set('minute', 30).toISOString(),
+    name:'as', 
     id:'2022-04-sdfs26T09:02:02Z'
   }, 
   {
