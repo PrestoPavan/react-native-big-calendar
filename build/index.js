@@ -390,14 +390,30 @@ function hoursRange(range) {
     }
     return result;
 }
-function formatEventData(data, hoursRange) {
+function formatEventData(data, hoursRange, interval) {
     var result = hoursRange.map(function (timeObj) {
         var values = [];
         data.map(function (item) {
-            if (dayjs__default['default'](item.startDate).isSame(timeObj.startTime) ||
-                (dayjs__default['default'](item.startDate).isAfter(timeObj.startTime) && dayjs__default['default'](item.startDate).isBefore(timeObj.endTime)) ||
-                (dayjs__default['default'](item.endDate).isAfter(timeObj.endTime) && dayjs__default['default'](item.endDate).isBefore(timeObj.endTime)) ||
-                (dayjs__default['default'](timeObj.startTime).isBetween(item.startDate, item.endDate))) {
+            var startMinute = dayjs__default['default'](item.startDate).get('minute');
+            var endMinute = dayjs__default['default'](item.endDate).get('minute');
+            if (startMinute >= 0 && startMinute <= interval) {
+                startMinute = 0;
+            }
+            else {
+                startMinute = interval + 1;
+            }
+            var itemStartDate = dayjs__default['default'](item.startDate).minute(startMinute).startOf('minute');
+            var itemEndDate;
+            if (endMinute >= 0 && endMinute <= interval) {
+                endMinute = interval;
+                itemEndDate = dayjs__default['default'](item.endDate).minute(endMinute).startOf('minute');
+            }
+            else {
+                endMinute = 0;
+                itemEndDate = dayjs__default['default'](item.endDate).minute(0).add(1, 'hour').startOf('hour');
+            }
+            if (dayjs__default['default'](timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
+                dayjs__default['default'](timeObj.endTime).valueOf() <= itemEndDate.valueOf()) {
                 values.push(item);
             }
         });
@@ -1422,6 +1438,19 @@ function DefaultEventRenderer(_a) {
             : null)));
 }
 
+function DefaultEmptySlotRenderer(_a) {
+    var touchableOpacityProps = _a.touchableOpacityProps, event = _a.event, cellHeight = _a.cellHeight;
+    var theme = useTheme();
+    return (React__namespace.createElement(reactNative.TouchableOpacity, __assign({}, touchableOpacityProps),
+        React__namespace.createElement(reactNative.View, { style: {
+                height: cellHeight, backgroundColor: theme.palette.cellBg, borderTopWidth: 1, borderColor: theme.palette.gray[200],
+                flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 5,
+                width: '100%'
+            } }, event.data && event.data.length === 0 ?
+            React__namespace.createElement(reactNative.Text, null, "Available for booking")
+            : null)));
+}
+
 var _HourGuideColumn = function (_a) {
     var cellHeight = _a.cellHeight, hour = _a.hour, _b = _a.hourStyle, hourStyle = _b === void 0 ? {} : _b, _c = _a.hourContainerStyle, hourContainerStyle = _c === void 0 ? {} : _c;
     var theme = useTheme();
@@ -1432,7 +1461,7 @@ var _HourGuideColumn = function (_a) {
 var HourGuideColumn = React__namespace.memo(_HourGuideColumn, function () { return true; });
 
 function PrestoCalendar$1(_a) {
-    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs__default['default']().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle, scrollOffsetMinutes = _a.scrollOffsetMinutes, style = _a.style, _f = _a.containerHeight, containerHeight = _f === void 0 ? 700 : _f;
+    var headerComponent = _a.headerComponent, hourRange = _a.hourRange, headerComponentStyle = _a.headerComponentStyle, hourStyle = _a.hourStyle, _b = _a.interval, interval = _b === void 0 ? 30 : _b, eventData = _a.eventData, _c = _a.currentDate, currentDate = _c === void 0 ? dayjs__default['default']().startOf('d').toISOString() : _c, _d = _a.renderCell, renderCell = _d === void 0 ? null : _d, _e = _a.cellHeight, cellHeight = _e === void 0 ? 90 : _e, hourContainerStyle = _a.hourContainerStyle, calendarStyle = _a.calendarStyle, scrollOffsetMinutes = _a.scrollOffsetMinutes, style = _a.style, _f = _a.containerHeight, containerHeight = _f === void 0 ? 700 : _f, mode = _a.mode, onPressEvent = _a.onPressEvent, renderEvent = _a.renderEvent, renderEmptySlots = _a.renderEmptySlots, _g = _a.showEmptySlots, showEmptySlots = _g === void 0 ? false : _g, onPressEmptySlot = _a.onPressEmptySlot;
     var theme = useTheme();
     var hoursRangeArr = prestoHourRange(hourRange, interval, currentDate);
     var scrollView = React__default['default'].useRef(null);
@@ -1450,21 +1479,55 @@ function PrestoCalendar$1(_a) {
             }, reactNative.Platform.OS === 'web' ? 0 : 10);
         }
     }, [scrollView, scrollOffsetMinutes, cellHeight]);
-    var data = formatEventData(eventData, hoursRangeArr);
-    console.log('data', data);
+    var date = dayjs__default['default'](currentDate).startOf('d');
+    var data = formatEventData(eventData, hoursRangeArr, interval);
+    var getEventCellPositionStyle = function (start, end) {
+        var relativeHeight = dayjs__default['default'](end).diff(start, 'minute') * cellHeight / interval;
+        var relativeTop = dayjs__default['default'](start).diff(hoursRangeArr[0].startTime, 'minute') * cellHeight / interval;
+        return {
+            height: relativeHeight - 1,
+            top: relativeTop,
+        };
+    };
+    var eventTimeStyle = { fontSize: 14, color: '#ffffff' };
+    var renderPrestoEvent = function (event) { return (React__default['default'].createElement(reactNative.TouchableOpacity, { style: __assign({ width: '99%', left: 3, right: 3, borderRadius: 3, position: 'absolute', zIndex: 1, backgroundColor: '#4285f4' }, getEventCellPositionStyle(event.startDate, event.endDate)), onPress: function () {
+            if (onPressEvent) {
+                onPressEvent(event);
+            }
+        } }, renderEvent ? renderEvent(event) :
+        React__default['default'].createElement(reactNative.View, { style: { padding: 5 } },
+            React__default['default'].createElement(reactNative.Text, { style: eventTimeStyle }, event.name),
+            React__default['default'].createElement(reactNative.Text, { style: __assign(__assign({}, eventTimeStyle), { marginTop: 5 }) }, formatStartEnd(event.startDate, event.endDate, 'h:mm a'))))); };
+    // console.log('data',data);
     return (React__default['default'].createElement(React__default['default'].Fragment, null,
         headerComponent != null ? React__default['default'].createElement(reactNative.View, { style: headerComponentStyle }, headerComponent) : null,
-        React__default['default'].createElement(reactNative.ScrollView, { contentContainerStyle: __assign({}, calendarStyle), style: [
+        React__default['default'].createElement(reactNative.ScrollView, { contentContainerStyle: __assign(__assign({}, calendarStyle), { overflow: 'hidden' }), style: [
                 {
                     height: containerHeight - cellHeight * 3,
                 }, style
             ], ref: scrollView, scrollEventThrottle: 32, showsVerticalScrollIndicator: false, nestedScrollEnabled: true, contentOffset: reactNative.Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 } },
             React__default['default'].createElement(reactNative.View, { style: { flex: 1, flexDirection: "row", backgroundColor: theme.palette.cellBackgroundColor, borderBottomWidth: 1, borderColor: theme.palette.gray[200] } },
                 React__default['default'].createElement(reactNative.View, { style: { backgroundColor: theme.palette.cellBg, borderRightWidth: 1, borderColor: theme.palette.gray[200] } }, hoursRangeArr.map(function (item) { return (React__default['default'].createElement(HourGuideColumn, { key: item.startTime, cellHeight: cellHeight, hour: dayjs__default['default'](item.startTime).format('hh:mm A'), ampm: true, hourStyle: hourStyle, hourContainerStyle: hourContainerStyle })); })),
-                React__default['default'].createElement(reactNative.View, { style: { flex: 1 } }, data.map(function (event, index) {
-                    return React__default['default'].createElement(reactNative.View, { key: index, style: { flex: 1 } }, renderCell ? renderCell(event) :
-                        React__default['default'].createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));
-                }))))));
+                React__default['default'].createElement(reactNative.View, { style: { flex: 1, position: 'relative' } },
+                    mode === 'detailed' ?
+                        eventData.filter(function (data) {
+                            return dayjs__default['default'](data.startDate).isBetween(date.startOf('day'), date.endOf('day'), null, '[)');
+                        }).map(function (event) {
+                            return renderPrestoEvent(event);
+                        })
+                        :
+                            data.map(function (event, index) {
+                                return React__default['default'].createElement(reactNative.View, { key: index, style: { flex: 1 } }, renderCell ? renderCell(event) :
+                                    React__default['default'].createElement(DefaultEventRenderer, { event: event, cellHeight: cellHeight }));
+                            }),
+                    showEmptySlots ?
+                        data.map(function (event, index) {
+                            return React__default['default'].createElement(reactNative.View, { key: index, style: {} }, renderEmptySlots ? renderEmptySlots(event) :
+                                React__default['default'].createElement(DefaultEmptySlotRenderer, { event: event, cellHeight: cellHeight, touchableOpacityProps: {
+                                        onPressEmptySlot: onPressEmptySlot
+                                    } }));
+                        })
+                        : null)))));
 }
 
 dayjs__default['default'].extend(duration__default['default']);

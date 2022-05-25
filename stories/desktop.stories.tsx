@@ -36,6 +36,20 @@ storiesOf('showcase Desktop', module)
       scrollOffsetMinutes={500}
     />
   </View>
+)).add('Detailed Presto calendar', () => (
+  <View style={styles.desktop}>
+    <PrestoCalendar
+      hourRange={'0-24'}
+      eventData={eventData}
+      hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
+      hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
+      style={{ height:SCREEN_HEIGHT }}
+      scrollOffsetMinutes={500}
+      mode="detailed"
+      showEmptySlots={true}
+     
+    />
+  </View>
 ))
   .add('day mode', () => (
     <View style={styles.desktop}>

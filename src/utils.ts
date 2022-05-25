@@ -97,15 +97,32 @@ export function hoursRange(range: string){
   return result
 }
 
-export function formatEventData( data:any, hoursRange:any){ 
+export function formatEventData( data:any, hoursRange:any, interval:any){ 
   let result = hoursRange.map((timeObj:any) =>{
     let values:any = []
     data.map( ( item:any ) => {
-       if ( dayjs(item.startDate).isSame(timeObj.startTime) || 
-       ( dayjs(item.startDate).isAfter(timeObj.startTime) && dayjs(item.startDate).isBefore(timeObj.endTime) ) || 
-       ( dayjs(item.endDate).isAfter(timeObj.endTime) && dayjs(item.endDate).isBefore(timeObj.endTime) ) ||
-      (dayjs(timeObj.startTime).isBetween(item.startDate, item.endDate ) )
-      ){
+        let startMinute = dayjs(item.startDate).get('minute')
+        let endMinute = dayjs(item.endDate).get('minute')
+      
+        if( startMinute >= 0 &&  startMinute <= interval){
+          startMinute = 0
+        } else {
+          startMinute = interval+1
+        }
+        var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+        var itemEndDate ;
+
+        if(endMinute >= 0 && endMinute <= interval){
+          endMinute = interval
+          itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+        } else {
+          endMinute = 0;
+          itemEndDate = dayjs(item.endDate).minute(0).add(1,'hour').startOf('hour')
+        }
+  
+       if (  dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() && 
+       dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf() )
+      {
         values.push(item)
        }     
     })

@@ -12,7 +12,7 @@ export declare function getDatesInNextOneDay(date?: Date | dayjs.Dayjs, locale?:
 export declare const hours: number[];
 export declare function prestoHourRange(range: string, interval: number, currentDate?: any): any;
 export declare function hoursRange(range: string): number[];
-export declare function formatEventData(data: any, hoursRange: any): any;
+export declare function formatEventData(data: any, hoursRange: any, interval: any): any;
 export declare function formatHour(hour: number, ampm?: boolean): string;
 export declare function isToday(date: dayjs.Dayjs): boolean;
 export declare function getRelativeTopInDay(date: dayjs.Dayjs): number;

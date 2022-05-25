@@ -55,6 +55,7 @@ export const events: Array<ICalendarEventBase & { color?: string }> = [
     end: dayjs().set('hour', 14).set('minute', 15).toDate(),
     children: eventNotes,
   },
+  
 ]
 export const eventData = [ 
   {
@@ -74,8 +75,8 @@ export const eventData = [
     id:'2022-0asd4-26T09:02:02Z'
   }, 
   {
-    startDate:dayjs().set('hour', 12).set('minute', 10).toISOString(),
-    endDate:dayjs().set('hour',12).set('minute', 30).toISOString(),
+    startDate:dayjs().set('hour', 12).set('minute', 35).toISOString(),
+    endDate:dayjs().set('hour',12).set('minute', 40).toISOString(),
     name:'sd', 
     id:'2022-04-2sdsd6T09:02:02Z'
   }, 
@@ -92,8 +93,8 @@ export const eventData = [
     id:'2022-04-sdfs26T09:02:02Z'
   }, 
   {
-    startDate:dayjs().set('hour', 14).set('minute', 10).toISOString(),
-    endDate:dayjs().set('hour',15).set('minute', 30).toISOString(),
+    startDate:dayjs().set('hour', 23).set('minute', 10).toISOString(),
+    endDate:dayjs().set('date',26).set('hour',24).set('minute', 0).toISOString(),
     name:'asda', 
     id:'2022-04-svdf:02:02Z'
   }, 

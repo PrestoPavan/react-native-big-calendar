@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import React from 'react'
-import { View,ScrollView, Platform } from 'react-native'
-import { prestoHourRange } from '../utils';
+import { View,ScrollView, Platform ,Text, TouchableOpacity} from 'react-native'
+import { prestoHourRange,formatStartEnd } from '../utils';
 import {
   formatEventData
 } from '../utils'
 import { DefaultEventRenderer } from './DefaultEventRenderer';
+import DefaultEmptySlotRenderer from './DefaultEmptySlotRenderer';
 import { HourGuideColumn } from './PrestoHoursGuide';
 import { useTheme } from '../theme/ThemeContext'
 
@@ -23,7 +24,13 @@ export default function PrestoCalendar({
   calendarStyle,
   scrollOffsetMinutes,
   style,
-  containerHeight = 700
+  containerHeight = 700,
+  mode,
+  onPressEvent,
+  renderEvent,
+  renderEmptySlots,
+  showEmptySlots = false,
+  onPressEmptySlot
 }:any) {
   const theme = useTheme()
   const hoursRangeArr = prestoHourRange(hourRange, interval, currentDate)
@@ -47,18 +54,57 @@ export default function PrestoCalendar({
     }
   }, [scrollView, scrollOffsetMinutes, cellHeight])
 
+  const date = dayjs(currentDate).startOf('d')
+  const data = formatEventData(eventData, hoursRangeArr, interval )
+ 
+  const getEventCellPositionStyle = (start: Date, end: Date) => {
+    const relativeHeight =  dayjs(end).diff(start, 'minute') * cellHeight / interval
+    const relativeTop = dayjs(start).diff(hoursRangeArr[0].startTime, 'minute') * cellHeight / interval
+   
+    return {
+      height: relativeHeight -1 ,
+      top: relativeTop,
+    }
+  }
 
-  const data = formatEventData(eventData, hoursRangeArr )
-  console.log('data', data);
-  
+  const eventTimeStyle = { fontSize: 14, color: '#ffffff' }
+  const renderPrestoEvent = (event:any ) => (
+    <TouchableOpacity style={{ 
+      width:'99%', 
+      left:3, 
+      right:3, 
+      borderRadius:3, 
+      position:'absolute', 
+      zIndex:1,
+      backgroundColor:'#4285f4',
+      ...getEventCellPositionStyle(event.startDate, event.endDate),
+     }} onPress={()=>{
+       if(onPressEvent){
+          onPressEvent(event)
+       }
+     }}>
+        {renderEvent ? renderEvent(event) : 
+          <View style={{ padding:5}}>
+            <Text  style={eventTimeStyle}>{event.name}</Text>
+            <Text style={{...eventTimeStyle, marginTop:5}}>
+                {formatStartEnd(event.startDate, event.endDate, 'h:mm a')}               
+            </Text>
+          </View>
+        }
+     
+    </TouchableOpacity>
+  )
+        // console.log('data',data);
+        
   return (
       <React.Fragment>
       {headerComponent != null ? <View style={headerComponentStyle}>{headerComponent}</View> : null}
         <ScrollView 
-          contentContainerStyle={{...calendarStyle}} 
+          contentContainerStyle={{...calendarStyle, overflow:'hidden'}} 
           style={[
             {
               height: containerHeight - cellHeight * 3,
+             
             }, style
           ]}
           ref={scrollView}
@@ -80,14 +126,37 @@ export default function PrestoCalendar({
                 />
                 ))}
             </View>
-            <View style={{flex:1}}>
-              {data.map( (event:any, index:any ) => {
+            <View style={{flex:1, position:'relative'}}>
+              { mode === 'detailed' ? 
+                  eventData.filter((data: any) => {
+                    return dayjs(data.startDate).isBetween(
+                      date.startOf('day'),
+                      date.endOf('day'),
+                      null,
+                      '[)',
+                    )
+                  }).map((event:any) => {                    
+                      return renderPrestoEvent(event)
+                  })
+              : 
+              data.map( (event:any, index:any ) => {
                 return <View key={index} style={{ flex:1}}>
                   {renderCell ? renderCell(event) :
                     <DefaultEventRenderer event={event} cellHeight={cellHeight}  />
                   }
                 </View>
               })}
+              {showEmptySlots ? 
+                data.map( (event:any, index:any ) => {
+                  return <View key={index} style={{ }}>
+                    { renderEmptySlots ? renderEmptySlots(event) :
+                      <DefaultEmptySlotRenderer event={event} cellHeight={cellHeight} touchableOpacityProps={{
+                        onPressEmptySlot:onPressEmptySlot
+                      }} />
+                    }
+                  </View>
+                })
+              : null}
             </View>
           </View>
         </ScrollView>
