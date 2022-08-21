@@ -6,12 +6,20 @@ import React from 'react'
 import { Alert, Dimensions, View } from 'react-native'
 
 import { Calendar } from '../src'
+import PrestoCalendar from '../src/components/PrestoCalendar'
 import { CONTROL_HEIGHT, Control } from './components/Control'
-import { customEventRenderer, events, multipleUserEvents, spanningEvents, eventData } from './events'
+import {
+  customEventRenderer,
+  eventData,
+  eventDataThree,
+  eventDataTwo,
+  events,
+  multipleUserEvents,
+  spanningEvents,
+} from './events'
 import { useEvents } from './hooks'
 import { styles } from './styles'
 import { themes } from './themes'
-import PrestoCalendar from '../src/components/PrestoCalendar'
 
 function alert(input: any) {
   // @ts-ignore
@@ -25,32 +33,32 @@ function alert(input: any) {
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
 storiesOf('showcase Desktop', module)
-.add('Presto calendar', () => (
-  <View style={styles.desktop}>
-    <PrestoCalendar
-      hourRange={'0-24'}
-      eventData={eventData}
-      hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
-      hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
-      style={{ height:SCREEN_HEIGHT }}
-      scrollOffsetMinutes={500}
-    />
-  </View>
-)).add('Detailed Presto calendar', () => (
-  <View style={styles.desktop}>
-    <PrestoCalendar
-      hourRange={'0-24'}
-      eventData={eventData}
-      hourContainerStyle={{borderTopWidth:1, borderLeftWidth:1, borderColor:'#000000' }}
-      hourStyle={{ alignItems:'center', justifyContent:'center', fontSize:14 }}
-      style={{ height:SCREEN_HEIGHT }}
-      scrollOffsetMinutes={500}
-      mode="detailed"
-      showEmptySlots={true}
-     
-    />
-  </View>
-))
+  .add('Presto calendar', () => (
+    <View style={styles.desktop}>
+      <PrestoCalendar
+        hourRange={'0-24'}
+        eventData={eventDataTwo}
+        hourContainerStyle={{ borderTopWidth: 1, borderLeftWidth: 1, borderColor: '#000000' }}
+        hourStyle={{ alignItems: 'center', justifyContent: 'center', fontSize: 14 }}
+        style={{ height: SCREEN_HEIGHT }}
+        scrollOffsetMinutes={500}
+      />
+    </View>
+  ))
+  .add('Detailed Presto calendar', () => (
+    <View style={styles.desktop}>
+      <PrestoCalendar
+        hourRange={'0-24'}
+        eventData={eventDataThree}
+        hourContainerStyle={{ borderTopWidth: 1, borderLeftWidth: 1, borderColor: '#000000' }}
+        hourStyle={{ alignItems: 'center', justifyContent: 'center', fontSize: 14 }}
+        style={{ height: SCREEN_HEIGHT }}
+        scrollOffsetMinutes={500}
+        mode="detailed"
+        showEmptySlots={true}
+      />
+    </View>
+  ))
   .add('day mode', () => (
     <View style={styles.desktop}>
       <Calendar

@@ -1,0 +1,106 @@
+import { hoursRange, eventData } from "./data.js";
+import _ from "lodash";
+import moment from "moment";
+
+const getRangeHours = (
+  startTime = "2022-08-18T10:00:00Z",
+  endTime = "2022-08-18T10:25:00Z",
+  interval = 30
+) => {
+  let startDate = new Date(startTime);
+  let endDate = new Date(endTime);
+
+  let hoursBag = [];
+  while (startDate <= endDate) {
+    hoursBag.push(new Date(startDate));
+    startDate.setMinutes(startDate.getMinutes() + interval);
+  }
+  return hoursBag;
+}; 
+
+_.forEach(hoursRange, (hourItem) => {
+  let startTime = new Date(hourItem.startTime);
+  let endTime = new Date(hourItem.endTime);
+  let values = [];
+
+  _.forEach(eventData, (eventItem) => {
+    let hourBags = getRangeHours(eventItem.startDate, eventItem.endDate);
+    let eventStart = _.first(hourBags);
+    let eventEnd = _.last(hourBags);
+    let isLessThanSlot = hourBags.length == 1;
+
+    if (
+      isLessThanSlot &&
+      new Date(eventStart) >= startTime &&
+      new Date(eventStart) < endTime
+    ) {
+      values.push(eventItem);
+    } else if (
+      moment(startTime).isBetween(eventStart, eventEnd) ||
+      moment(endTime).isBetween(eventStart, eventEnd)
+    ) {
+      values.push(eventItem);
+    }
+  });
+  hourItem.data = values;
+});
+
+console.log(_.filter(hoursRange, (i) => i.data.length > 0));
+
+// _.forEach(eventData, (eventItem) => {
+//   let hourBags = getRangeHours(eventItem.startDate, eventItem.endDate);
+//   let eventStart = _.first(hourBags);
+//   let eventEnd = _.last(hourBags);
+//   let isLessThanSlot = hourBags.length == 1;
+
+//   _.forEach(hoursRange, (hourItem) => {
+//     let startTime = new Date(hourItem.startTime);
+//     let endTime = new Date(hourItem.endTime);
+
+//     if (!hourItem.data) {
+//       hourItem.data = [];
+//     }
+
+//     if (
+//       isLessThanSlot &&
+//       new Date(eventStart) >= startTime &&
+//       new Date(eventStart) < endTime
+//     ) {
+//       hourItem.data.push(eventItem);
+//     } else if (
+//       moment(startTime).isBetween(eventStart, eventEnd) ||
+//       moment(endTime).isBetween(eventStart, eventEnd)
+//     ) {
+//       hourItem.data.push(eventItem);
+//     }
+//   });
+// });
+
+// console.log(_.filter(hoursRange, (i) => i.data.length > 0));
+
+// let t = [];
+// let hourBags = getRangeHours();
+// let eventStart = _.first(hourBags);
+// let eventEnd = _.last(hourBags);
+// let diff = 20;
+// let interval = 30;
+
+// _.forEach(hoursRange, (hourItem) => {
+//   let startTime = new Date(hourItem.startTime);
+//   let endTime = new Date(hourItem.endTime);
+
+//   if (
+//     diff < interval &&
+//     new Date(eventStart) >= startTime &&
+//     new Date(eventStart) < endTime
+//   ) {
+//     t.push(hourItem);
+//   } else if (
+//     moment(startTime).isBetween(eventStart, eventEnd) ||
+//     moment(endTime).isBetween(eventStart, eventEnd)
+//   ) {
+//     t.push(hourItem);
+//   }
+// });
+
+// console.log(JSON.stringify(t, null, 1));

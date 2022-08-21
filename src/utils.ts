@@ -62,78 +62,91 @@ export const hours = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ]
 
-export function prestoHourRange(range: string, interval:number, currentDate:any = dayjs().startOf('d').toISOString() ){
-  var result:any = []
-  let rangeArray:any = range.split('-')
+export function prestoHourRange(
+  range: string,
+  interval: number,
+  currentDate: any = dayjs().startOf('d').toISOString(),
+) {
+  var result: any = []
+  let rangeArray: any = range.split('-')
   let diff = rangeArray[1] - rangeArray[0]
-  let timeIntervalInSeconds = 60000 * interval 
+  let timeIntervalInSeconds = 60000 * interval
   let startTime = dayjs(currentDate).hour(rangeArray[0]).startOf('h').valueOf()
 
-  for ( let i = 0 ; i < Number(diff * ( 60 / interval) ) ; i++){
-    let endTime =  startTime + timeIntervalInSeconds
-    if(i == 0 ){
+  for (let i = 0; i < Number(diff * (60 / interval)); i++) {
+    let endTime = startTime + timeIntervalInSeconds
+    if (i == 0) {
       result.push({
         startTime: dayjs(startTime),
-        endTime: dayjs(endTime) 
+        endTime: dayjs(endTime),
       })
       startTime += timeIntervalInSeconds
     } else {
       result.push({
         startTime: dayjs(startTime),
-        endTime: dayjs(endTime) 
+        endTime: dayjs(endTime),
       })
       startTime += timeIntervalInSeconds
     }
   }
-  
+
   return result
 }
-export function hoursRange(range: string){
+export function hoursRange(range: string) {
   let rangeArray = range.split('-')
   let result = []
-  for ( let i = Number(rangeArray[0]) ; i <= Number(rangeArray[1]) ; i++){
-    result.push(i) 
+  for (let i = Number(rangeArray[0]); i <= Number(rangeArray[1]); i++) {
+    result.push(i)
   }
   return result
 }
 
-export function formatEventData( data:any, hoursRange:any, interval:any){ 
-  let result = hoursRange.map((timeObj:any) =>{
-    let values:any = []
-    data.map( ( item:any ) => {
-        let startMinute = dayjs(item.startDate).get('minute')
-        let endMinute = dayjs(item.endDate).get('minute')
-      
-        if( startMinute >= 0 &&  startMinute <= interval){
-          startMinute = 0
-        } else {
-          startMinute = interval+1
-        }
-        var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
-        var itemEndDate ;
+//s
+export function formatEventData(data: any, hoursRange: any, interval: any) {
+  let result = hoursRange.map((timeObj: any) => {
+    let values: any = []
+    data.map((item: any) => {
+      let startMinute = dayjs(item.startDate).get('minute')
+      let endMinute = dayjs(item.endDate).get('minute')
 
-        if(endMinute >= 0 && endMinute <= interval){
-          endMinute = interval
-          itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
-        } else {
-          endMinute = 0;
-          itemEndDate = dayjs(item.endDate).minute(0).add(1,'hour').startOf('hour')
-        }
-  
-       if (  dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() && 
-       dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf() )
-      {
+      if (startMinute >= 0 && startMinute <= interval) {
+        startMinute = 1
+      } else {
+        startMinute = interval + 1
+      }
+      var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+      var itemEndDate
+
+      if (endMinute >= 0 && endMinute <= interval) {
+        endMinute = interval
+        itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+      } else {
+        endMinute = 0
+        itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
+      }
+
+      let isLessThanInterval = dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes')
+
+      if (
+        isLessThanInterval &&
+        itemStartDate.valueOf() >= dayjs(timeObj.startTime).valueOf() &&
+        itemEndDate.valueOf() <= dayjs(timeObj.endTime).valueOf()
+      ) {
         values.push(item)
-       }     
+      } else if (
+        dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
+        dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf()
+      ) {
+        values.push(item)
+      }
     })
     return {
       ...timeObj,
-      data:values
+      data: values,
     }
-  })  
+  })
   return result
 }
-
 
 export function formatHour(hour: number, ampm = false) {
   if (ampm) {
@@ -150,7 +163,6 @@ export function formatHour(hour: number, ampm = false) {
   }
   return `${hour}:00`
 }
-
 
 export function isToday(date: dayjs.Dayjs) {
   const today = dayjs()
