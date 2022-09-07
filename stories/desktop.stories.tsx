@@ -11,6 +11,7 @@ import { CONTROL_HEIGHT, Control } from './components/Control'
 import {
   customEventRenderer,
   eventData,
+  eventDataFour,
   eventDataThree,
   eventDataTwo,
   events,
@@ -37,7 +38,7 @@ storiesOf('showcase Desktop', module)
     <View style={styles.desktop}>
       <PrestoCalendar
         hourRange={'0-24'}
-        eventData={eventDataTwo}
+        eventData={eventDataFour}
         hourContainerStyle={{ borderTopWidth: 1, borderLeftWidth: 1, borderColor: '#000000' }}
         hourStyle={{ alignItems: 'center', justifyContent: 'center', fontSize: 14 }}
         style={{ height: SCREEN_HEIGHT }}
@@ -49,7 +50,7 @@ storiesOf('showcase Desktop', module)
     <View style={styles.desktop}>
       <PrestoCalendar
         hourRange={'0-24'}
-        eventData={eventDataThree}
+        eventData={eventDataFour}
         hourContainerStyle={{ borderTopWidth: 1, borderLeftWidth: 1, borderColor: '#000000' }}
         hourStyle={{ alignItems: 'center', justifyContent: 'center', fontSize: 14 }}
         style={{ height: SCREEN_HEIGHT }}
