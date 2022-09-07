@@ -61,3 +61,5 @@ typings/
 .next
 .jest
 .storybook-build
+
+build/
