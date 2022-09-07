@@ -69,9 +69,14 @@ export function prestoHourRange(
 ) {
   var result: any = []
   let rangeArray: any = range.split('-')
-  let diff = rangeArray[1] - rangeArray[0]
+  let [startHour = 0, startMinute = 0] = rangeArray[0].split(':')
+  let [endHour = 24, endMinute = 0] = rangeArray[1].split(':')
+  let diff = endHour - startHour
   let timeIntervalInSeconds = 60000 * interval
-  let startTime = dayjs(currentDate).hour(rangeArray[0]).startOf('h').valueOf()
+  let now = dayjs(currentDate).hour(startHour)
+
+  let startTime =
+    startMinute >= 30 ? now.minute(interval).startOf('m').valueOf() : now.startOf('h').valueOf()
 
   for (let i = 0; i < Number(diff * (60 / interval)); i++) {
     let endTime = startTime + timeIntervalInSeconds
@@ -82,6 +87,18 @@ export function prestoHourRange(
       })
       startTime += timeIntervalInSeconds
     } else {
+      result.push({
+        startTime: dayjs(startTime),
+        endTime: dayjs(endTime),
+      })
+      startTime += timeIntervalInSeconds
+    }
+  }
+
+  if (endMinute > 0) {
+    let ceilNumber = interval > 0 ? Math.ceil(endMinute / interval) : endMinute
+    for (let i = 0; i < ceilNumber; i++) {
+      let endTime = startTime + timeIntervalInSeconds
       result.push({
         startTime: dayjs(startTime),
         endTime: dayjs(endTime),
@@ -125,7 +142,8 @@ export function formatEventData(data: any, hoursRange: any, interval: any) {
         itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
       }
 
-      let isLessThanInterval = dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes')
+      let isLessThanInterval =
+        dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes') <= interval
 
       if (
         isLessThanInterval &&
