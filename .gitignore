@@ -63,3 +63,5 @@ typings/
 .storybook-build
 
 build/
+
+snippets.txt
