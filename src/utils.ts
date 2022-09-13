@@ -75,6 +75,8 @@ export function prestoHourRange(
   let timeIntervalInSeconds = 60000 * interval
   let now = dayjs(currentDate).hour(startHour)
 
+  console.log(`PrestoCalendar data prestoHourRange`, [startHour, startMinute, endHour, endMinute])
+
   let startTime =
     startMinute >= 30 ? now.minute(interval).startOf('m').valueOf() : now.startOf('h').valueOf()
 
