@@ -400,7 +400,6 @@ function prestoHourRange(range, interval, currentDate) {
   var diff = endHour - startHour
   var timeIntervalInSeconds = 60000 * interval
   var now = dayjs__default['default'](currentDate).hour(startHour)
-  console.log('PrestoCalendar data prestoHourRange', [startHour, startMinute, endHour, endMinute])
   var startTime =
     startMinute >= 30 ? now.minute(interval).startOf('m').valueOf() : now.startOf('h').valueOf()
   for (var i = 0; i < Number(diff * (60 / interval)); i++) {
@@ -440,54 +439,127 @@ function hoursRange(range) {
   }
   return result
 }
-//s
 function formatEventData(data, hoursRange, interval) {
   var result = hoursRange.map(function (timeObj) {
     var values = []
     data.map(function (item) {
+      var startDate = dayjs__default['default'](item.startDate)
+      var endDate = dayjs__default['default'](item.endDate)
       var startMinute = dayjs__default['default'](item.startDate).get('minute')
       var endMinute = dayjs__default['default'](item.endDate).get('minute')
-      if (startMinute >= 0 && startMinute <= interval) {
-        startMinute = 1
-      } else {
-        startMinute = interval + 1
-      }
-      var itemStartDate = dayjs__default['default'](item.startDate)
-        .minute(startMinute)
-        .startOf('minute')
-      var itemEndDate
-      if (endMinute >= 0 && endMinute <= interval) {
-        endMinute = interval
-        itemEndDate = dayjs__default['default'](item.endDate).minute(endMinute).startOf('minute')
-      } else {
-        endMinute = 0
-        itemEndDate = dayjs__default['default'](item.endDate)
-          .minute(0)
-          .add(1, 'hour')
-          .startOf('hour')
-      }
-      var isLessThanInterval =
-        dayjs__default['default'](item.startDate).diff(
-          dayjs__default['default'](item.endDate),
-          'minutes',
-        ) <= interval
+      // if (startMinute >= 0 && startMinute <= interval) {
+      //   startMinute = 1
+      // } else {
+      //   startMinute = interval + 1
+      // }
+      // var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+      // var itemStartDate = dayjs(item.startDate).startOf('minute')
+      // var itemEndDate;
+      // if (endMinute >= 0 && endMinute <= interval) {
+      //   endMinute = interval
+      //   itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+      // } else {
+      //   endMinute = 0
+      //   itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
+      // }
+      // itemEndDate = dayjs(item.endDate).startOf('hour');
+      var diff = dayjs__default['default'](item.endDate).diff(startDate, 'minutes')
+      var isLessThanInterval = diff <= interval
       if (
         isLessThanInterval &&
-        itemStartDate.valueOf() >= dayjs__default['default'](timeObj.startTime).valueOf() &&
-        itemEndDate.valueOf() <= dayjs__default['default'](timeObj.endTime).valueOf()
+        startDate.valueOf() >= dayjs__default['default'](timeObj.startTime).valueOf() &&
+        endDate.valueOf() <= dayjs__default['default'](timeObj.endTime).valueOf()
       ) {
         values.push(item)
-      } else if (
-        dayjs__default['default'](timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
-        dayjs__default['default'](timeObj.endTime).valueOf() <= itemEndDate.valueOf()
-      ) {
-        values.push(item)
+      } else {
+        startMinute = dayjs__default['default'](item.startDate).get('minute')
+        endMinute = dayjs__default['default'](item.endDate).get('minute')
+        if (startMinute === 0 || startMinute === interval) {
+          startDate = startDate.add(1, 'minute')
+        }
+        if (endMinute === 0 || endMinute === interval) {
+          endDate = endDate.subtract(1, 'minute')
+        }
+        var isStartDateInBetween = startDate.isBetween(
+          timeObj.startTime,
+          timeObj.endTime,
+          'minute',
+          '[]',
+        )
+        var isStartDateBetweenOrGreaterThan =
+          isStartDateInBetween ||
+          dayjs__default['default'](timeObj.startTime).valueOf() >= startDate.valueOf()
+        var isEndDateInBetween = endDate.isBetween(
+          timeObj.startTime,
+          timeObj.endTime,
+          'minute',
+          '[]',
+        )
+        var isEndDateBetweenOrGreaterThan =
+          isEndDateInBetween ||
+          dayjs__default['default'](timeObj.endTime).valueOf() <= endDate.valueOf()
+        if (isStartDateBetweenOrGreaterThan && isEndDateBetweenOrGreaterThan) {
+          values.push(item)
+        }
       }
     })
     return __assign(__assign({}, timeObj), { data: values })
   })
   return result
 }
+//s
+// export function formatEventData(data: any, hoursRange: any, interval: any) {
+//   // startDate: '2022-09-14T12:21:00Z',
+//   // endDate: '2022-09-14T14:00:00Z',
+//   let testHourRange = [
+//     {
+//       startTime: dayjs("2022-09-14T12:00:00Z"),
+//       endTime: dayjs("2022-09-14T12:30:00Z"),
+//     }
+//   ]
+//   let result = hoursRange.map((timeObj: any) => {
+//     let values: any = []
+//     data.map((item: any) => {
+//       let startMinute = dayjs(item.startDate).get('minute')
+//       let endMinute = dayjs(item.endDate).get('minute')
+//       // if (startMinute >= 0 && startMinute <= interval) {
+//       //   startMinute = 1
+//       // } else {
+//       //   startMinute = interval + 1
+//       // }
+//       // var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+//       var itemStartDate = dayjs(item.startDate).startOf('minute')
+//       var itemEndDate
+//       // if (endMinute >= 0 && endMinute <= interval) {
+//       //   endMinute = interval
+//       //   itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+//       // } else {
+//       //   endMinute = 0
+//       //   itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
+//       // }
+//       itemEndDate = dayjs(item.endDate).startOf('hour');
+//       let isLessThanInterval =
+//         dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes') <= interval
+//       if (
+//         isLessThanInterval &&
+//         itemStartDate.valueOf() >= dayjs(timeObj.startTime).valueOf() &&
+//         itemEndDate.valueOf() <= dayjs(timeObj.endTime).valueOf()
+//       ) {
+//         values.push(item)
+//       } else if (
+//         dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
+//         dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf()
+//       ) {
+//         values.push(item)
+//       }
+//     })
+//     return {
+//       ...timeObj,
+//       data: values,
+//     }
+//   })
+//   return result
+// }
 function formatHour(hour, ampm) {
   if (ampm === void 0) {
     ampm = false
