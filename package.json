@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "calendarize": "^1.1.1",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.11.6",
     "merge-anything": "4.0.2",
     "react-native-drax": "^0.9.3",
     "react-native-gesture-handler": "^2.3.2",
