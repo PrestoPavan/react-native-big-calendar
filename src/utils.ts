@@ -69,9 +69,14 @@ export function prestoHourRange(
 ) {
   var result: any = []
   let rangeArray: any = range.split('-')
-  let diff = rangeArray[1] - rangeArray[0]
+  let [startHour = 0, startMinute = 0] = rangeArray[0].split(':')
+  let [endHour = 24, endMinute = 0] = rangeArray[1].split(':')
+  let diff = endHour - startHour
   let timeIntervalInSeconds = 60000 * interval
-  let startTime = dayjs(currentDate).hour(rangeArray[0]).startOf('h').valueOf()
+  let now = dayjs(currentDate).hour(startHour)
+
+  let startTime =
+    startMinute >= 30 ? now.minute(interval).startOf('m').valueOf() : now.startOf('h').valueOf()
 
   for (let i = 0; i < Number(diff * (60 / interval)); i++) {
     let endTime = startTime + timeIntervalInSeconds
@@ -82,6 +87,18 @@ export function prestoHourRange(
       })
       startTime += timeIntervalInSeconds
     } else {
+      result.push({
+        startTime: dayjs(startTime),
+        endTime: dayjs(endTime),
+      })
+      startTime += timeIntervalInSeconds
+    }
+  }
+
+  if (endMinute > 0) {
+    let ceilNumber = interval > 0 ? Math.ceil(endMinute / interval) : endMinute
+    for (let i = 0; i < ceilNumber; i++) {
+      let endTime = startTime + timeIntervalInSeconds
       result.push({
         startTime: dayjs(startTime),
         endTime: dayjs(endTime),
@@ -101,43 +118,75 @@ export function hoursRange(range: string) {
   return result
 }
 
-//s
 export function formatEventData(data: any, hoursRange: any, interval: any) {
   let result = hoursRange.map((timeObj: any) => {
     let values: any = []
     data.map((item: any) => {
+      let startDate = dayjs(item.startDate)
+      let endDate = dayjs(item.endDate)
       let startMinute = dayjs(item.startDate).get('minute')
       let endMinute = dayjs(item.endDate).get('minute')
 
-      if (startMinute >= 0 && startMinute <= interval) {
-        startMinute = 1
-      } else {
-        startMinute = interval + 1
-      }
-      var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
-      var itemEndDate
+      // if (startMinute >= 0 && startMinute <= interval) {
+      //   startMinute = 1
+      // } else {
+      //   startMinute = interval + 1
+      // }
+      // var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+      // var itemStartDate = dayjs(item.startDate).startOf('minute')
+      // var itemEndDate;
 
-      if (endMinute >= 0 && endMinute <= interval) {
-        endMinute = interval
-        itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
-      } else {
-        endMinute = 0
-        itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
-      }
+      // if (endMinute >= 0 && endMinute <= interval) {
+      //   endMinute = interval
+      //   itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+      // } else {
+      //   endMinute = 0
+      //   itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
+      // }
 
-      let isLessThanInterval = dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes')
+      // itemEndDate = dayjs(item.endDate).startOf('hour');
+      let diff = dayjs(item.endDate).diff(startDate, 'minutes')
+      let isLessThanInterval = diff <= interval
 
       if (
         isLessThanInterval &&
-        itemStartDate.valueOf() >= dayjs(timeObj.startTime).valueOf() &&
-        itemEndDate.valueOf() <= dayjs(timeObj.endTime).valueOf()
+        startDate.valueOf() >= dayjs(timeObj.startTime).valueOf() &&
+        endDate.valueOf() <= dayjs(timeObj.endTime).valueOf()
       ) {
         values.push(item)
-      } else if (
-        dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
-        dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf()
-      ) {
-        values.push(item)
+      } else {
+        startMinute = dayjs(item.startDate).get('minute')
+        endMinute = dayjs(item.endDate).get('minute')
+
+        if (startMinute === 0 || startMinute === interval) {
+          startDate = startDate.add(1, 'minute')
+        }
+
+        if (endMinute === 0 || endMinute === interval) {
+          endDate = endDate.subtract(1, 'minute')
+        }
+
+        let isStartDateInBetween = startDate.isBetween(
+          timeObj.startTime,
+          timeObj.endTime,
+          'minute',
+          '[]',
+        )
+        let isStartDateBetweenOrGreaterThan =
+          isStartDateInBetween || dayjs(timeObj.startTime).valueOf() >= startDate.valueOf()
+
+        let isEndDateInBetween = endDate.isBetween(
+          timeObj.startTime,
+          timeObj.endTime,
+          'minute',
+          '[]',
+        )
+        let isEndDateBetweenOrGreaterThan =
+          isEndDateInBetween || dayjs(timeObj.endTime).valueOf() <= endDate.valueOf()
+
+        if (isStartDateBetweenOrGreaterThan && isEndDateBetweenOrGreaterThan) {
+          values.push(item)
+        }
       }
     })
     return {
@@ -147,6 +196,67 @@ export function formatEventData(data: any, hoursRange: any, interval: any) {
   })
   return result
 }
+
+//s
+// export function formatEventData(data: any, hoursRange: any, interval: any) {
+
+//   // startDate: '2022-09-14T12:21:00Z',
+//   // endDate: '2022-09-14T14:00:00Z',
+//   let testHourRange = [
+//     {
+//       startTime: dayjs("2022-09-14T12:00:00Z"),
+//       endTime: dayjs("2022-09-14T12:30:00Z"),
+//     }
+//   ]
+
+//   let result = hoursRange.map((timeObj: any) => {
+//     let values: any = []
+//     data.map((item: any) => {
+//       let startMinute = dayjs(item.startDate).get('minute')
+//       let endMinute = dayjs(item.endDate).get('minute')
+
+//       // if (startMinute >= 0 && startMinute <= interval) {
+//       //   startMinute = 1
+//       // } else {
+//       //   startMinute = interval + 1
+//       // }
+//       // var itemStartDate = dayjs(item.startDate).minute(startMinute).startOf('minute')
+//       var itemStartDate = dayjs(item.startDate).startOf('minute')
+//       var itemEndDate
+
+//       // if (endMinute >= 0 && endMinute <= interval) {
+//       //   endMinute = interval
+//       //   itemEndDate = dayjs(item.endDate).minute(endMinute).startOf('minute')
+//       // } else {
+//       //   endMinute = 0
+//       //   itemEndDate = dayjs(item.endDate).minute(0).add(1, 'hour').startOf('hour')
+//       // }
+
+//       itemEndDate = dayjs(item.endDate).startOf('hour');
+
+//       let isLessThanInterval =
+//         dayjs(item.startDate).diff(dayjs(item.endDate), 'minutes') <= interval
+
+//       if (
+//         isLessThanInterval &&
+//         itemStartDate.valueOf() >= dayjs(timeObj.startTime).valueOf() &&
+//         itemEndDate.valueOf() <= dayjs(timeObj.endTime).valueOf()
+//       ) {
+//         values.push(item)
+//       } else if (
+//         dayjs(timeObj.startTime).valueOf() >= itemStartDate.valueOf() &&
+//         dayjs(timeObj.endTime).valueOf() <= itemEndDate.valueOf()
+//       ) {
+//         values.push(item)
+//       }
+//     })
+//     return {
+//       ...timeObj,
+//       data: values,
+//     }
+//   })
+//   return result
+// }
 
 export function formatHour(hour: number, ampm = false) {
   if (ampm) {

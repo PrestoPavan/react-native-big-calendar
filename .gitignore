@@ -61,3 +61,7 @@ typings/
 .next
 .jest
 .storybook-build
+
+build/
+
+snippets.txt

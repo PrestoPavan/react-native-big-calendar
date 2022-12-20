@@ -409,3 +409,28 @@ export const customEventRenderer: EventRenderer<MyCustomEventType> = (
     </TouchableOpacity>
   )
 }
+
+export const eventDataFour = [
+  {
+    id: '631182235fc4e7471fe56fc8',
+    operator_start_time: null,
+    operator_end_time: null,
+    service_name: 'Blowdry Styling',
+    work_duration: 60,
+    merchant_id: '619b9ec70bfc38000d03e2ea',
+    appointment_id: '631182055fc4e7471fe56fc6',
+    operator_id: '62de76685fc4e707bde40383',
+    service_id: '61ee20b1d11235000d8f2a5a',
+    service_item_id: '6311820b5fc4e7471fe56fc7',
+    user_id: {
+      $oid: '6278e1a95fc4e7704498bbb6',
+    },
+    title: 'Blowdry Styling',
+    name: 'Disha ',
+    reference_id: 'DM',
+    startDate: '2022-09-05T05:30:00Z',
+    endDate: '2022-09-05T06:30:00Z',
+  },
+]
+
+export const eventDataFive = []
